@@ -138,7 +138,11 @@ func runClient(args Args, upstreamMap map[string]string) {
 				} else if val, ok := upstreamMap[""]; ok {
 					proxyHost = val
 				}
+
 				requestURI := fmt.Sprintf("%s%s", proxyHost, req.URL.String())
+				if len(req.URL.RawQuery) > 0 {
+					requestURI = requestURI + "?" + req.URL.RawQuery
+				}
 
 				log.Printf("[%s] proxy => %s", requestID, requestURI)
 
@@ -202,8 +206,12 @@ func proxyHandler(msg chan *http.Response, outgoing chan *http.Request, gatewayT
 
 		body, _ := ioutil.ReadAll(r.Body)
 		// fmt.Println("RequestURI/Host", r.RequestURI, r.Host)
+		qs := ""
+		if len(r.URL.RawQuery) > 0 {
+			qs = "?" + r.URL.RawQuery
+		}
 
-		req, _ := http.NewRequest(r.Method, fmt.Sprintf("http://%s%s", r.Host, r.URL.Path),
+		req, _ := http.NewRequest(r.Method, fmt.Sprintf("http://%s%s%s", r.Host, r.URL.Path, qs),
 			bytes.NewReader(body))
 
 		copyHeaders(req.Header, &r.Header)
