@@ -157,3 +157,11 @@ Replace the line: `- "-remote=your-public-ip"` with the public IP belonging to y
 * What is the cheapest viable VPS?
 
 The cheapest option is probably Scaleway at 1.99 EUR / month using the "1-XS" from the "Start" tier. 
+
+* Where can I get a cheap / free domain-name?
+
+You can get a free domain-name with a .tk / .ml or .ga TLD from https://www.freenom.com - make sure the domain has at least 4 letters to get it for free. You can also get various other domains starting as cheap as 1-2USD from https://www.namecheap.com
+
+Namecheap provides wildcard TLS out of the box, but freenom only provides root/naked domain and a list of sub-domains. Domains from both providers can be moved to alternative nameservers for use with AWS Route 53 or Google Cloud DNS - this then enables wildcard DNS and the ability to get a wildcard TLS certificate from LetsEncrypt.
+
+
