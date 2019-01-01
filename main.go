@@ -28,20 +28,6 @@ type Args struct {
 
 var client *http.Client
 
-func buildUpstreamMap(args string) map[string]string {
-	items := make(map[string]string)
-
-	entries := strings.Split(args, ",")
-	for _, entry := range entries {
-		kvp := strings.Split(entry, "=")
-		if len(kvp) == 1 {
-			items[""] = strings.TrimSpace(kvp[0])
-		} else {
-			items[strings.TrimSpace(kvp[0])] = strings.TrimSpace(kvp[1])
-		}
-	}
-	return items
-}
 func main() {
 	args := Args{}
 	flag.IntVar(&args.Port, "port", 8000, "port for server")
@@ -52,23 +38,31 @@ func main() {
 
 	flag.Parse()
 
-	if len(args.Upstream) == 0 {
-		log.Printf("give --upstream\n")
-		return
+	argsUpstreamParser := ArgsUpstreamParser{}
+
+	upstreamMap := map[string]string{}
+
+	if args.Server == false {
+
+		if len(args.Upstream) == 0 {
+			log.Printf("give --upstream\n")
+			return
+		}
+		upstreamMap = argsUpstreamParser.Parse(args.Upstream)
+		for key, val := range upstreamMap {
+			log.Printf("Upstream: %s => %s\n", key, val)
+		}
 	}
 
-	gatewayTimeout, gatewayTimeoutErr := time.ParseDuration(args.GatewayTimeoutRaw)
-	if gatewayTimeoutErr != nil {
-		fmt.Printf("%s\n", gatewayTimeoutErr)
-		return
-	}
+	if args.Server {
+		gatewayTimeout, gatewayTimeoutErr := time.ParseDuration(args.GatewayTimeoutRaw)
+		if gatewayTimeoutErr != nil {
+			fmt.Printf("%s\n", gatewayTimeoutErr)
+			return
+		}
 
-	args.GatewayTimeout = gatewayTimeout
-	log.Printf("Gateway timeout: %f secs\n", gatewayTimeout.Seconds())
-
-	upstreamMap := buildUpstreamMap(args.Upstream)
-	for key, val := range upstreamMap {
-		log.Printf("Upstream: %s => %s\n", key, val)
+		args.GatewayTimeout = gatewayTimeout
+		log.Printf("Gateway timeout: %f secs\n", gatewayTimeout.Seconds())
 	}
 
 	client = http.DefaultClient
