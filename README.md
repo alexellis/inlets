@@ -2,6 +2,8 @@
 
 Expose your local endpoints to the Internet
 
+[![Build Status](https://travis-ci.org/alexellis/inlets.svg?branch=master)](https://travis-ci.org/alexellis/inlets) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Go Report Card](https://goreportcard.com/badge/github.com/alexellis/inlets)](https://goreportcard.com/report/github.com/alexellis/inlets) [![Documentation](https://godoc.org/github.com/alexellis/inlets?status.svg)](http://godoc.org/github.com/alexellis/inlets)
+
 ## Intro
 
 inlets combines a reverse proxy and websocket tunnels to expose your internal and development endpoints to the public Internet via an exit-node. An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address.
