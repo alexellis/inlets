@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/alexellis/inlets/pkg/server"
 )
 
 type Args struct {
@@ -66,4 +68,11 @@ func main() {
 	} else {
 		runClient(args, upstreamMap)
 	}
+}
+
+func startServer(args Args) {
+
+	server := server.Server{Port: args.Port,
+		GatewayTimeout: args.GatewayTimeout}
+	server.Serve()
 }

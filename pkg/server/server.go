@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bufio"
@@ -9,16 +9,24 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/alexellis/inlets/pkg/transport"
 	"github.com/gorilla/websocket"
 )
 
-func startServer(args Args) {
+// Server for the exit-node of inlets
+type Server struct {
+	GatewayTimeout time.Duration
+	Port           int
+}
 
+// Serve traffic
+func (s *Server) Serve() {
 	ch := make(chan *http.Response)
 	outgoing := make(chan *http.Request)
+
 	http.HandleFunc("/ws", serveWs(ch, outgoing))
-	http.HandleFunc("/", proxyHandler(ch, outgoing, args.GatewayTimeout))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", args.Port), nil); err != nil {
+	http.HandleFunc("/", proxyHandler(ch, outgoing, s.GatewayTimeout))
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), nil); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -104,7 +112,7 @@ func proxyHandler(msg chan *http.Response, outgoing chan *http.Request, gatewayT
 		req, _ := http.NewRequest(r.Method, fmt.Sprintf("http://%s%s%s", r.Host, r.URL.Path, qs),
 			bytes.NewReader(body))
 
-		copyHeaders(req.Header, &r.Header)
+		transport.CopyHeaders(req.Header, &r.Header)
 
 		outgoing <- req
 
@@ -124,7 +132,7 @@ func proxyHandler(msg chan *http.Response, outgoing chan *http.Request, gatewayT
 
 			innerBody, _ := ioutil.ReadAll(res.Body)
 
-			copyHeaders(w.Header(), &res.Header)
+			transport.CopyHeaders(w.Header(), &res.Header)
 			w.WriteHeader(res.StatusCode)
 			w.Write(innerBody)
 			break
@@ -135,13 +143,5 @@ func proxyHandler(msg chan *http.Response, outgoing chan *http.Request, gatewayT
 			break
 		}
 
-	}
-}
-
-func copyHeaders(destination http.Header, source *http.Header) {
-	for k, v := range *source {
-		vClone := make([]string, len(v))
-		copy(vClone, v)
-		(destination)[k] = vClone
 	}
 }

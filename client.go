@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/alexellis/inlets/pkg/transport"
 	"github.com/gorilla/websocket"
 	"github.com/twinj/uuid"
 )
@@ -83,7 +84,7 @@ func runClient(args Args, upstreamMap map[string]string) {
 					return
 				}
 
-				copyHeaders(newReq.Header, &req.Header)
+				transport.CopyHeaders(newReq.Header, &req.Header)
 
 				res, resErr := client.Do(newReq)
 
