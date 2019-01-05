@@ -11,6 +11,7 @@ import (
 
 	"github.com/alexellis/inlets/pkg/transport"
 	"github.com/gorilla/websocket"
+	"github.com/twinj/uuid"
 )
 
 // Server for the exit-node of inlets
@@ -24,10 +25,66 @@ func (s *Server) Serve() {
 	ch := make(chan *http.Response)
 	outgoing := make(chan *http.Request)
 
-	http.HandleFunc("/ws", serveWs(ch, outgoing))
 	http.HandleFunc("/", proxyHandler(ch, outgoing, s.GatewayTimeout))
+	http.HandleFunc("/ws", serveWs(ch, outgoing))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), nil); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func proxyHandler(msg chan *http.Response, outgoing chan *http.Request, gatewayTimeout time.Duration) func(w http.ResponseWriter, r *http.Request) {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		inletsID := uuid.Formatter(uuid.NewV4(), uuid.FormatHex)
+
+		log.Printf("[%s] proxy %s %s %s", inletsID, r.Host, r.Method, r.URL.String())
+		r.Header.Set(transport.InletsHeader, inletsID)
+
+		if r.Body != nil {
+			defer r.Body.Close()
+		}
+
+		body, _ := ioutil.ReadAll(r.Body)
+		// fmt.Println("RequestURI/Host", r.RequestURI, r.Host)
+		qs := ""
+		if len(r.URL.RawQuery) > 0 {
+			qs = "?" + r.URL.RawQuery
+		}
+
+		req, _ := http.NewRequest(r.Method, fmt.Sprintf("http://%s%s%s", r.Host, r.URL.Path, qs),
+			bytes.NewReader(body))
+
+		transport.CopyHeaders(req.Header, &r.Header)
+
+		outgoing <- req
+
+		log.Printf("[%s] waiting for response", inletsID)
+
+		cancel := make(chan bool)
+
+		timeout := time.AfterFunc(gatewayTimeout, func() {
+			cancel <- true
+		})
+
+		select {
+		case res := <-msg:
+			timeout.Stop()
+
+			innerBody, _ := ioutil.ReadAll(res.Body)
+
+			transport.CopyHeaders(w.Header(), &res.Header)
+			w.WriteHeader(res.StatusCode)
+			w.Write(innerBody)
+			log.Printf("[%s] wrote %d bytes", inletsID, len(innerBody))
+
+			break
+		case <-cancel:
+			log.Printf("[%s] timeout after %f secs\n", inletsID, gatewayTimeout.Seconds())
+
+			w.WriteHeader(http.StatusGatewayTimeout)
+			break
+		}
 	}
 }
 
@@ -47,12 +104,12 @@ func serveWs(msg chan *http.Response, outgoing chan *http.Request) func(w http.R
 			return
 		}
 
-		fmt.Println(ws.RemoteAddr())
+		log.Printf("Connecting websocket on %s:", ws.RemoteAddr())
 
-		done := make(chan struct{})
+		connectionDone := make(chan struct{})
 
 		go func() {
-			defer close(done)
+			defer close(connectionDone)
 			for {
 				msgType, message, err := ws.ReadMessage()
 				if err != nil {
@@ -75,10 +132,11 @@ func serveWs(msg chan *http.Response, outgoing chan *http.Request) func(w http.R
 		}()
 
 		go func() {
-			defer close(done)
+			defer close(connectionDone)
 			for {
-				fmt.Println("wait for outboundRequest")
+				log.Printf("wait for request")
 				outboundRequest := <-outgoing
+				log.Printf("[%s] request written to websocket", outboundRequest.Header.Get(transport.InletsHeader))
 
 				buf := new(bytes.Buffer)
 
@@ -89,59 +147,6 @@ func serveWs(msg chan *http.Response, outgoing chan *http.Request) func(w http.R
 
 		}()
 
-		<-done
-	}
-}
-
-func proxyHandler(msg chan *http.Response, outgoing chan *http.Request, gatewayTimeout time.Duration) func(w http.ResponseWriter, r *http.Request) {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Reverse proxy", r.Host, r.Method, r.URL.String())
-
-		if r.Body != nil {
-			defer r.Body.Close()
-		}
-
-		body, _ := ioutil.ReadAll(r.Body)
-		// fmt.Println("RequestURI/Host", r.RequestURI, r.Host)
-		qs := ""
-		if len(r.URL.RawQuery) > 0 {
-			qs = "?" + r.URL.RawQuery
-		}
-
-		req, _ := http.NewRequest(r.Method, fmt.Sprintf("http://%s%s%s", r.Host, r.URL.Path, qs),
-			bytes.NewReader(body))
-
-		transport.CopyHeaders(req.Header, &r.Header)
-
-		outgoing <- req
-
-		log.Println("waiting for response")
-
-		cancel := make(chan bool)
-
-		timeout := time.AfterFunc(gatewayTimeout, func() {
-			cancel <- true
-		})
-
-		select {
-		case res := <-msg:
-			timeout.Stop()
-
-			log.Println("writing response from tunnel", res.ContentLength)
-
-			innerBody, _ := ioutil.ReadAll(res.Body)
-
-			transport.CopyHeaders(w.Header(), &res.Header)
-			w.WriteHeader(res.StatusCode)
-			w.Write(innerBody)
-			break
-		case <-cancel:
-			log.Printf("Cancelled due to timeout after %f secs\n", gatewayTimeout.Seconds())
-
-			w.WriteHeader(http.StatusGatewayTimeout)
-			break
-		}
-
+		<-connectionDone
 	}
 }

@@ -4,12 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
+	"github.com/alexellis/inlets/pkg/client"
 	"github.com/alexellis/inlets/pkg/server"
 )
 
+// Args parsed from the command-line
 type Args struct {
 	Port              int
 	Server            bool
@@ -18,8 +19,6 @@ type Args struct {
 	GatewayTimeoutRaw string
 	GatewayTimeout    time.Duration
 }
-
-var client *http.Client
 
 func main() {
 	args := Args{}
@@ -58,21 +57,22 @@ func main() {
 		log.Printf("Gateway timeout: %f secs\n", gatewayTimeout.Seconds())
 	}
 
-	client = http.DefaultClient
-	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-		return http.ErrUseLastResponse
-	}
-
 	if args.Server {
-		startServer(args)
+		server := server.Server{
+			Port:           args.Port,
+			GatewayTimeout: args.GatewayTimeout,
+		}
+		server.Serve()
 	} else {
-		runClient(args, upstreamMap)
+		client := client.Client{
+			Remote:      args.Remote,
+			UpstreamMap: upstreamMap,
+		}
+
+		err := client.Connect()
+
+		if err != nil {
+			panic(err)
+		}
 	}
-}
-
-func startServer(args Args) {
-
-	server := server.Server{Port: args.Port,
-		GatewayTimeout: args.GatewayTimeout}
-	server.Serve()
 }
