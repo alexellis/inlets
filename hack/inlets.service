@@ -1,0 +1,14 @@
+[Unit]
+Description=Inlets Server Service
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+StartLimitInterval=0
+EnvironmentFile=/etc/default/inlets
+ExecStart=/usr/bin/inlets -server=true -port=80 -token="${AUTHTOKEN}"
+
+[Install]
+WantedBy=multi-user.target

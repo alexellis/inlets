@@ -58,7 +58,7 @@ Start the tunnel server on a machine with a publicly-accessible IPv4 IP address 
 ./inlets -server=true -port=80
 ```
 
-> Note: You can pass the `-token` argument followed by a token value to both the server and client to prevent authorization connections to the tunnel.
+> Note: You can pass the `-token` argument followed by a token value to both the server and client to prevent unauthorized connections to the tunnel.
 
 Example with token:
 
@@ -156,7 +156,7 @@ Exit-node:
 while [ true ] ; do sleep 5 && ./inlets -server=true -upstream=http://192.168.0.28:8080 ; done
 ```
 
-* Run as a deployment on Kubernetes
+### Run as a deployment on Kubernetes
 
 You can even run `inlets` within your Kubernetes in Docker (kind) cluster to get ingress (incoming network) for your services such as the OpenFaaS gateway:
 
@@ -185,13 +185,35 @@ spec:
 
 Replace the line: `- "-remote=your-public-ip"` with the public IP belonging to your VPS.
 
-* What is the cheapest viable VPS?
+### Run on a VPS
 
-The cheapest option is probably [Scaleway](https://www.scaleway.com/) at 1.99 EUR / month using the "1-XS" from the "Start" tier. 
+Provisioning on a VPS will see inlets running as a systemd service.  All the usual `service` commands should be used with `inlets` as the service name.
 
-If you have the Scaleway CLI installed you can provision a host with [./hack/provision-scaleway.sh](./hack/provision-scaleway.sh),
+Inlets uses a token to prevent unauthorized access to the server component.  A known token can be configured by amending [userdata.sh](./hack/userdata.sh) prior to provisioning
 
-* Where can I get a cheap / free domain-name?
+```
+# Enables randomly generated authentication token by default.
+# Change the value here if you desire a specific token value.
+export INLETSTOKEN=$(head -c 16 /dev/urandom | shasum | cut -d" " -f1)
+```
+
+If the token value is randomly generated then you will need to access the VPS in order to obtain the token value.
+
+```
+cat /etc/default/inlets 
+```  
+
+* Scaleway
+
+[Scaleway](https://www.scaleway.com/) offer probably the cheapest option at 1.99 EUR / month using the "1-XS" from the "Start" tier. 
+
+If you have the Scaleway CLI installed you can provision a host with [./hack/provision-scaleway.sh](./hack/provision-scaleway.sh).
+
+* Digital Ocean
+
+If you are a Digital Ocean user and use `doctl` then you can provision a host with [./hack/provision-digitalocean.sh](./hack/provision-digitalocean.sh).  Please ensure you have configured `droplet.create.ssh-keys` within your `~/.config/doctl/config.yaml`.
+
+### Where can I get a cheap / free domain-name?
 
 You can get a free domain-name with a .tk / .ml or .ga TLD from https://www.freenom.com - make sure the domain has at least 4 letters to get it for free. You can also get various other domains starting as cheap as 1-2USD from https://www.namecheap.com
 
