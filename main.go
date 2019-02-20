@@ -4,10 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/alexellis/inlets/pkg/client"
 	"github.com/alexellis/inlets/pkg/server"
+)
+
+var (
+	Version   string
+	GitCommit string
 )
 
 // Args parsed from the command-line
@@ -20,10 +26,12 @@ type Args struct {
 	GatewayTimeout    time.Duration
 	Token             string
 	PrintServerToken  bool
+	Version           bool
 }
 
 func main() {
 	args := Args{}
+	flag.BoolVar(&args.Version, "version", false, "print version information and exit")
 	flag.IntVar(&args.Port, "port", 8000, "port for server")
 	flag.BoolVar(&args.Server, "server", true, "server or client")
 	flag.StringVar(&args.Remote, "remote", "127.0.0.1:8000", " server address i.e. 127.0.0.1:8000")
@@ -34,11 +42,16 @@ func main() {
 
 	flag.Parse()
 
+	if args.Version {
+		PrintVersionInfo()
+		os.Exit(0)
+	}
+
 	argsUpstreamParser := ArgsUpstreamParser{}
 
 	upstreamMap := map[string]string{}
 
-	if args.Server == false {
+	if !args.Server {
 
 		if len(args.Upstream) == 0 {
 			log.Printf("give --upstream\n")
@@ -87,4 +100,13 @@ func main() {
 			panic(err)
 		}
 	}
+}
+
+func PrintVersionInfo() {
+	if len(Version) == 0 {
+		fmt.Println("Version: dev")
+	} else {
+		fmt.Println("Version:", Version)
+	}
+	fmt.Println("Git Commit:", GitCommit)
 }

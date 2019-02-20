@@ -66,7 +66,6 @@ func (c *Client) Connect() error {
 			case websocket.TextMessage:
 				log.Printf("TextMessage: %s\n", message)
 
-				break
 			case websocket.BinaryMessage:
 				// proxyToUpstream
 
@@ -142,7 +141,6 @@ func (c *Client) Connect() error {
 
 					ws.WriteMessage(websocket.BinaryMessage, buf2.Bytes())
 				}
-				break
 			}
 
 		}

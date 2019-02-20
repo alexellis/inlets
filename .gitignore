@@ -1,4 +1,2 @@
-inlets
-inlets-armhf
-inlets-darwin
-inlets-arm64
+bin
+.vscode
