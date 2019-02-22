@@ -40,6 +40,8 @@ func (b *Bus) Send(id string, res *http.Response) {
 	var ok bool
 
 	b.Mutex.RLock()
+	defer b.Mutex.RUnlock()
+	
 	_, ok = b.Subscriptions[id]
 
 	if !ok {
@@ -47,7 +49,6 @@ func (b *Bus) Send(id string, res *http.Response) {
 	}
 
 	b.Subscriptions[id].Data <- res
-	b.Mutex.RUnlock()
 }
 
 func (b *Bus) Subscribe(id string) *Subscription {
