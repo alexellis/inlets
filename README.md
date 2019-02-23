@@ -54,11 +54,16 @@ Unlike HTTP 1.1 which follows a synchronous request/response model websockets us
 * ~~There is no timeout for when the tunnel is disconnected~~ timeout can be configured via args on the server
 * ~~The upstream URL has to be configured on both server and client until a discovery or service advertisement mechanism is added~~ advertise on the client
 
+### Get `inlets`
+
+Run this command:
+```bash
+curl https://github.com/alexellis/inlets/blob/master/get.sh | bash
+```
+
 Binaries for Linux, Darwin (MacOS) and armhf are made available via the [releases page](https://github.com/alexellis/inlets/releases)
 
 ## Test it out
-
-You can get a binary release from the [releases pages](https://github.com/alexellis/inlets/releases) and skip the installation of Go.
 
 * On the server or exit-node
 
