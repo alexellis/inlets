@@ -120,7 +120,7 @@ func (c *Client) Connect() error {
 					buf2 := new(bytes.Buffer)
 					errRes.Write(buf2)
 					if errRes.Body != nil {
-						defer errRes.Body.Close()
+						errRes.Body.Close()
 					}
 
 					ws.WriteMessage(websocket.BinaryMessage, buf2.Bytes())
@@ -133,7 +133,7 @@ func (c *Client) Connect() error {
 
 					res.Write(buf2)
 					if res.Body != nil {
-						defer res.Body.Close()
+						res.Body.Close()
 					}
 
 					log.Printf("[%s] %d bytes", inletsID, buf2.Len())
