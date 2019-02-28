@@ -22,4 +22,4 @@ EXPOSE 80
 
 WORKDIR /root/
 
-CMD ["/usr/bin/inlets"]
+CMD ["/root/inlets"]
