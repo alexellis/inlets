@@ -1,7 +1,46 @@
 sudo: required
 
+language: generic
+
 services:
   - docker
 
+addons:
+  apt:
+    packages:
+      - docker-ce
+
 script:
-  - make docker
+  - make build
+
+after_success:
+    - if [ ! -z "$TRAVIS_TAG" ] ; then
+        if [ -z "$DOCKER_NS" ] ; then
+          export DOCKER_NS=alexellis2;
+        fi;
+
+        docker tag $DOCKER_NS/inlets:latest $DOCKER_NS/inlets:$TRAVIS_TAG;
+        echo $DOCKER_PASSWORD | docker login -u=$DOCKER_USERNAME --password-stdin;
+        docker push $DOCKER_NS/inlets:$TRAVIS_TAG;
+      fi;
+
+before_deploy:
+  - make build_redist
+  - ./ci/hashgen.sh
+
+deploy:
+  provider: releases
+  api_key:
+      secure: ""
+  file: 
+  - inlets
+  - inlets-darwin
+  - inlets-armhf
+  - inlets-arm64
+  - inlets.sha256
+  - inlets-darwin.sha256
+  - inlets-armhf.sha256
+  - inlets-arm64.sha256
+  skip_cleanup: true
+  on:
+    tags: true

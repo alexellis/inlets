@@ -1,18 +1,32 @@
 TAG?=latest
-Version := $(shell git describe --tags --dirty)
-GitCommit := $(shell git rev-parse HEAD)
-LDFLAGS := "-s -w -X main.Version=$(Version) -X main.GitCommit=$(GitCommit)"
 
 .PHONY: all
-all: docker
+all: clean build
 
-.PHONY: dist
-dist:
-	CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/inlets
-	CGO_ENABLED=0 GOOS=darwin go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/inlets-darwin
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/inlets-armhf
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/inlets-arm64
+.PHONY: build
+build:
+	./build.sh
 
-.PHONY: docker
-docker:
-	docker build --build-arg Version=$(Version) --build-arg GIT_COMMIT=$(GitCommit) -t alexellis2/inlets:$(TAG) .
+.PHONY: build_redist
+build_redist:
+	./build_redist.sh
+
+.PHONY: ci-armhf-push
+ci-armhf-push:
+	(docker push alexellis2/inlets:$(TAG)-armhf)
+
+.PHONY: ci-armhf-build
+ci-armhf-build:
+	(./build.sh $(TAG)-armhf)
+
+.PHONY: ci-arm64-push
+ci-arm64-push:
+	(docker push alexellis2/inlets:$(TAG)-arm64)
+
+.PHONY: ci-arm64-build
+ci-arm64-build:
+	(./build.sh $(TAG)-arm64)
+
+.PHONY: clean
+clean:
+	(rm -f inlets inlets-arm64 inlets-armhf inlets-darwin)

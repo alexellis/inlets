@@ -1,0 +1,48 @@
+FROM golang:1.11 as builder
+
+WORKDIR /go/src/github.com/alexellis/inlets
+
+COPY vendor            vendor
+COPY pkg                pkg
+COPY main.go            .
+COPY parse_upstream.go  .
+
+
+# Run a gofmt and exclude all vendored code.
+RUN test -z "$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*"))" || { echo "Run \"gofmt -s -w\" on your Golang code"; exit 1; }
+
+ARG GIT_COMMIT
+ARG VERSION
+
+RUN CGO_ENABLED=0 GOOS=linux go build --ldflags "-s -w \
+        -X main.GitCommit=${GIT_COMMIT} \
+        -X main.GitCommit=${VERSION}" \
+        -a -installsuffix cgo -o inlets \
+ && CGO_ENABLED=0 GOOS=darwin go build --ldflags "-s -w \
+        -X main.GitCommit=${GIT_COMMIT} \
+        -X main.GitCommit=${VERSION}" \
+        -a -installsuffix cgo -o inlets-darwin \
+ && CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build --ldflags "-s -w \
+        -X main.GitCommit=${GIT_COMMIT} \
+        -X main.GitCommit=${VERSION}" \
+        -a -installsuffix cgo -o inlets-armhf \
+ && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build --ldflags "-s -w \
+        -X main.GitCommit=${GIT_COMMIT} \
+        -X main.GitCommit=${VERSION}" \
+        -a -installsuffix cgo -o inlets-arm64
+
+FROM alpine:3.8
+
+RUN apk --no-cache add ca-certificates git
+
+WORKDIR /root/
+
+COPY --from=builder /go/src/github.com/alexellis/inlets/inlets                .
+COPY --from=builder /go/src/github.com/alexellis/inlets/inlets-darwin         .
+COPY --from=builder /go/src/github.com/alexellis/inlets/inlets-armhf          .
+COPY --from=builder /go/src/github.com/alexellis/inlets/inlets-arm64          .
+
+ENV PATH=$PATH:/root/
+
+CMD ["inlets"]
+
