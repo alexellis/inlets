@@ -23,6 +23,7 @@ deploy:
     - ./bin/inlets-darwin
     - ./bin/inlets-armhf
     - ./bin/inlets-arm64
+    - ./bin/inlets.exe
   skip_cleanup: true
   on:
     tags: true

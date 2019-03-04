@@ -68,7 +68,7 @@ curl -sLS https://get.inlets.dev | sh
 curl -sLS https://get.inlets.dev | sudo sh
 ```
 
-Binaries for Linux, Darwin (MacOS) and armhf are made available via the [releases page](https://github.com/alexellis/inlets/releases)
+Binaries for Linux, Darwin (MacOS), Windows (experimental) and armhf are made available via the [releases page](https://github.com/alexellis/inlets/releases)
 
 ## Test it out
 
@@ -100,7 +100,7 @@ Install hash-browns or run your own HTTP server
 go get -u github.com/alexellis/hash-browns
 cd $GOPATH/src/github.com/alexellis/hash-browns
 
-port=3000 go run server.go 
+port=3000 go run server.go
 ```
 
 * On your machine behind the firewall
@@ -222,7 +222,7 @@ export INLETSTOKEN=$(head -c 16 /dev/urandom | shasum | cut -d" " -f1)
 If the token value is randomly generated then you will need to access the VPS in order to obtain the token value.
 
 ```sh
-cat /etc/default/inlets 
+cat /etc/default/inlets
 ```  
 
 #### Where can I get a cheap / free domain-name?
