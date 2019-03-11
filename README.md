@@ -77,7 +77,7 @@ Binaries for Linux, Darwin (MacOS) and armhf are made available via the [release
 Start the tunnel server on a machine with a publicly-accessible IPv4 IP address such as a VPS.
 
 ```bash
-./inlets -server=true -port=80
+./inlets server --port=80
 ```
 
 > Note: You can pass the `-token` argument followed by a token value to both the server and client to prevent unauthorized connections to the tunnel.
@@ -85,7 +85,7 @@ Start the tunnel server on a machine with a publicly-accessible IPv4 IP address 
 Example with token:
 
 ```bash
-token=$(head -c 16 /dev/urandom | shasum | cut -d" " -f1); ./inlets -server=true -port=8090 -token="$token"
+token=$(head -c 16 /dev/urandom | shasum | cut -d" " -f1); ./inlets server --port=8090 --token="$token"
 ```
 
 Note down your public IPv4 IP address i.e. 192.168.0.101
@@ -108,19 +108,19 @@ port=3000 go run server.go
 Start the tunnel client
 
 ```sh
-./inlets -server=false \
- -remote=192.168.0.101:80 \
- -upstream=http://127.0.0.1:3000
+./inlets client \
+ --remote=192.168.0.101:80 \
+ --upstream=http://127.0.0.1:3000
 ```
 
-Replace the `-remote` with the address where your other machine is listening.
+Replace the `--remote` with the address where your other machine is listening.
 
 We now have an example service running (hash-browns), a tunnel server and a tunnel client.
 
 So send a request to the public IP address or hostname:
 
-```sh
-./inlets -server=false -remote=192.168.0.101:80 -upstream  "gateway.mydomain.tk=http://127.0.0.1:3000"
+```sh 
+./inlets client --remote=192.168.0.101:80 --upstream  "gateway.mydomain.tk=http://127.0.0.1:3000"
 ```
 
 ```sh
@@ -160,7 +160,7 @@ Contributions are welcome. All commits must be signed-off with `git commit -s` t
 
 ## Take things further
 
-You can expose an OpenFaaS or OpenFaaS Cloud deployment with `inlets` - just change `-upstream=http://127.0.0.1:3000` to `-upstream=http://127.0.0.1:8080` or `-upstream=http://127.0.0.1:31112`. You can even point at an IP address inside or outside your network for instance: `-upstream=http://192.168.0.101:8080`.
+You can expose an OpenFaaS or OpenFaaS Cloud deployment with `inlets` - just change `--upstream=http://127.0.0.1:3000` to `--upstream=http://127.0.0.1:8080` or `--upstream=http://127.0.0.1:31112`. You can even point at an IP address inside or outside your network for instance: `--upstream=http://192.168.0.101:8080`.
 
 You can build a basic supervisor script for `inlets` in case of a crash, it will re-connect within 5 seconds:
 
@@ -169,13 +169,13 @@ In this example the Host/Client is acting as a relay for OpenFaaS running on por
 Host/Client:
 
 ```sh
-while [ true ] ; do sleep 5 && ./inlets -server=false -upstream=http://192.168.0.28:8080 -remote=exit.my.club  ; done
+while [ true ] ; do sleep 5 && ./inlets client --upstream=http://192.168.0.28:8080 --remote=exit.my.club  ; done
 ```
 
 Exit-node:
 
 ```sh
-while [ true ] ; do sleep 5 && ./inlets -server=true -upstream=http://192.168.0.28:8080 ; done
+while [ true ] ; do sleep 5 && ./inlets server --upstream=http://192.168.0.28:8080 ; done
 ```
 
 ### Run as a deployment on Kubernetes
@@ -200,12 +200,12 @@ spec:
         imagePullPolicy: Always
         command: ["./inlets"]
         args:
-        - "-server=false"
-        - "-upstream=http://gateway.openfaas:8080"
-        - "-remote=your-public-ip"
+        - "client"
+        - "--upstream=http://gateway.openfaas:8080,http://endpoint.openfaas:9090"
+        - "--remote=your-public-ip"
 ```
 
-Replace the line: `- "-remote=your-public-ip"` with the public IP belonging to your VPS.
+Replace the line: `- "--remote=your-public-ip"` with the public IP belonging to your VPS.
 
 ### Run on a VPS
 

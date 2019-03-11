@@ -5,8 +5,8 @@ WORKDIR /go/src/github.com/alexellis/inlets
 COPY .git               .git
 COPY vendor             vendor
 COPY pkg                pkg
+COPY cmd                cmd
 COPY main.go            .
-COPY parse_upstream.go  .
 
 ARG GIT_COMMIT
 ARG VERSION

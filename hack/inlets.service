@@ -8,7 +8,7 @@ Restart=always
 RestartSec=1
 StartLimitInterval=0
 EnvironmentFile=/etc/default/inlets
-ExecStart=/usr/local/bin/inlets -server=true -port=80 -token="${AUTHTOKEN}"
+ExecStart=/usr/bin/inlets server -port=80 -token="${AUTHTOKEN}"
 
 [Install]
 WantedBy=multi-user.target
