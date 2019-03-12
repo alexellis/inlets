@@ -95,12 +95,19 @@ func proxyHandler(outgoing chan *http.Request, bus *types.Bus, gatewayTimeout ti
 			select {
 			case res := <-sub.Data:
 
-				innerBody, _ := ioutil.ReadAll(res.Body)
+				if res != nil && res.Body != nil {
+					innerBody, _ := ioutil.ReadAll(res.Body)
 
-				transport.CopyHeaders(w.Header(), &res.Header)
-				w.WriteHeader(res.StatusCode)
-				w.Write(innerBody)
-				log.Printf("[%s] wrote %d bytes", inletsID, len(innerBody))
+					transport.CopyHeaders(w.Header(), &res.Header)
+					w.WriteHeader(res.StatusCode)
+					w.Write(innerBody)
+					log.Printf("[%s] wrote %d bytes", inletsID, len(innerBody))
+				} else {
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Request or body from request was nil, client may have disconnected"))
+					log.Printf("Request or body from request was nil, client may have disconnected")
+				}
+
 				wg.Done()
 				break
 			case <-time.After(gatewayTimeout):
@@ -144,7 +151,7 @@ func serveWs(outgoing chan *http.Request, bus *types.Bus, token string) func(w h
 			return
 		}
 
-		log.Printf("Connecting websocket on %s:", ws.RemoteAddr())
+		log.Printf("Connecting websocket on: %s", ws.RemoteAddr())
 
 		connectionDone := make(chan struct{})
 

@@ -68,7 +68,7 @@ curl -sLS https://get.inlets.dev | sh
 curl -sLS https://get.inlets.dev | sudo sh
 ```
 
-Binaries for Linux, Darwin (MacOS) and armhf are made available via the [releases page](https://github.com/alexellis/inlets/releases)
+Binaries for Linux, Darwin (MacOS) and armhf are made available via the [releases page](https://github.com/alexellis/inlets/releases). You will also find SHA checksums available if you want to verify your download.
 
 ## Test it out
 

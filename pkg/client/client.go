@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/alexellis/inlets/pkg/transport"
 	"github.com/gorilla/websocket"
@@ -27,6 +28,9 @@ type Client struct {
 
 	// Token for authentication
 	Token string
+
+	// PingWaitDuration duration to wait between pings
+	PingWaitDuration time.Duration
 }
 
 // Connect connect and serve traffic through websocket
@@ -49,11 +53,13 @@ func (c *Client) Connect() error {
 
 	u := url.URL{Scheme: remoteURL.Scheme, Host: remoteURL.Host, Path: "/tunnel"}
 
-	log.Printf("connecting to %s", u.String())
+	log.Printf("connecting to %s with ping=%s", u.String(), c.PingWaitDuration.String())
 
-	ws, _, err := websocket.DefaultDialer.Dial(u.String(), http.Header{
+	wsc, _, err := websocket.DefaultDialer.Dial(u.String(), http.Header{
 		"Authorization": []string{"Bearer " + c.Token},
 	})
+
+	ws := transport.NewWebsocketConn(wsc, c.PingWaitDuration)
 
 	if err != nil {
 		return err
@@ -61,16 +67,40 @@ func (c *Client) Connect() error {
 
 	log.Printf("Connected to websocket: %s", ws.LocalAddr())
 
-	defer ws.Close()
+	defer wsc.Close()
 
+	// Send pings
+	tickerDone := make(chan bool)
+
+	go func() {
+		log.Printf("Writing pings")
+
+		ticker := time.NewTicker((c.PingWaitDuration * 9) / 10) // send on a period which is around 9/10ths of original value
+		for {
+			select {
+			case <-ticker.C:
+				if err := ws.Ping(); err != nil {
+					close(tickerDone)
+				}
+				break
+			case <-tickerDone:
+				log.Printf("tickerDone, no more pings will be sent from client\n")
+				return
+			}
+		}
+	}()
+
+	// Work with websocket
 	done := make(chan struct{})
 
 	go func() {
 		defer close(done)
+
 		for {
 			messageType, message, err := ws.ReadMessage()
+			fmt.Printf("Read a message from websocket.\n")
 			if err != nil {
-				log.Println("read:", err)
+				fmt.Printf("Read error: %s.\n", err)
 				return
 			}
 
@@ -78,6 +108,7 @@ func (c *Client) Connect() error {
 			case websocket.TextMessage:
 				log.Printf("TextMessage: %s\n", message)
 
+				break
 			case websocket.BinaryMessage:
 				// proxyToUpstream
 

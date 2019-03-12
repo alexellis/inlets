@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/alexellis/inlets/pkg/client"
 	"github.com/pkg/errors"
@@ -14,6 +15,7 @@ func init() {
 	clientCmd.Flags().StringP("remote", "r", "127.0.0.1:8000", "server address i.e. 127.0.0.1:8000")
 	clientCmd.Flags().StringP("upstream", "u", "", "upstream server i.e. http://127.0.0.1:3000")
 	clientCmd.Flags().StringP("token", "t", "", "token for authentication")
+	clientCmd.Flags().DurationP("ping", "p", time.Second*10, "ping internal")
 }
 
 type UpstreamParser interface {
@@ -59,11 +61,11 @@ Note: You can pass the --token argument followed by a token value to both the se
 func runClient(cmd *cobra.Command, _ []string) error {
 	upstream, err := cmd.Flags().GetString("upstream")
 	if err != nil {
-		return errors.Wrap(err, "failed to get 'upstream' value.")
+		return errors.Wrap(err, "failed to get 'upstream' value")
 	}
 
 	if len(upstream) == 0 {
-		return errors.New("upstream is missing in the client argument.")
+		return errors.New("upstream is missing in the client argument")
 	}
 
 	argsUpstreamParser := ArgsUpstreamParser{}
@@ -82,10 +84,16 @@ func runClient(cmd *cobra.Command, _ []string) error {
 		return errors.Wrap(err, "failed to get 'token' value.")
 	}
 
+	pingDuration, err := cmd.Flags().GetDuration("ping")
+	if err != nil {
+		return errors.Wrap(err, "failed to get 'ping' value.")
+	}
+
 	inletsClient := client.Client{
-		Remote:      remote,
-		UpstreamMap: upstreamMap,
-		Token:       token,
+		Remote:           remote,
+		UpstreamMap:      upstreamMap,
+		Token:            token,
+		PingWaitDuration: pingDuration,
 	}
 
 	if err := inletsClient.Connect(); err != nil {
