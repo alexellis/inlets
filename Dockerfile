@@ -6,12 +6,13 @@ COPY .git               .git
 COPY vendor             vendor
 COPY pkg                pkg
 COPY main.go            .
+COPY Makefile           .
 COPY parse_upstream.go  .
 
 ARG GIT_COMMIT
 ARG VERSION
 
-RUN CGO_ENABLED=0 go build -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" -a -installsuffix cgo -o /usr/bin/inlets
+RUN make install
 
 FROM alpine:3.9
 RUN apk add --force-refresh ca-certificates
@@ -21,7 +22,7 @@ RUN addgroup -S app && adduser -S -g app app \
   && mkdir -p /home/app || : \
   && chown -R app /home/app
 
-COPY --from=build /usr/bin/inlets /usr/bin/
+COPY --from=build /usr/local/bin/inlets /usr/bin/
 WORKDIR /home/app
 
 USER app

@@ -8,7 +8,7 @@ services:
 - docker
 script:
 - make docker
-- make dist
+- make build
 
 after_success:
   - make docker-login
