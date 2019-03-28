@@ -25,10 +25,6 @@
 #   unused-packages = true
 
 
-[[constraint]]
-  name = "github.com/gorilla/websocket"
-  version = "1.4.0"
-
 [prune]
   go-tests = true
   unused-packages = true
@@ -37,7 +33,10 @@
   name = "github.com/spf13/cobra"
   version = "0.0.3"
 
-
 [[constraint]]
   name = "github.com/pkg/errors"
   version = "0.8.1"
+
+[[constraint]]
+  name = "k8s.io/apimachinery"
+  version = "kubernetes-1.13.5"
