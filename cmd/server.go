@@ -6,7 +6,6 @@ import (
 	"github.com/alexellis/inlets/pkg/server"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 func init() {
@@ -14,7 +13,6 @@ func init() {
 	serverCmd.Flags().IntP("port", "p", 8000, "port for server")
 	serverCmd.Flags().StringP("token", "t", "", "token for authentication")
 	serverCmd.Flags().Bool("print-token", true, "prints the token in server mode")
-	serverCmd.Flags().String("gateway-timeout", "5s", "timeout for upstream gateway")
 }
 
 // serverCmd represents the server sub command.
@@ -44,26 +42,14 @@ func runServer(cmd *cobra.Command, _ []string) error {
 		log.Printf("Server token: %s", token)
 	}
 
-	gatewayTimeoutRaw, err := cmd.Flags().GetString("gateway-timeout")
-	if err != nil {
-		return errors.Wrap(err, "failed to get the 'gateway-timeout' value.")
-	}
-
-	gatewayTimeout, gatewayTimeoutErr := time.ParseDuration(gatewayTimeoutRaw)
-	if gatewayTimeoutErr != nil {
-		return gatewayTimeoutErr
-	}
-	log.Printf("Gateway timeout: %f secs\n", gatewayTimeout.Seconds())
-
 	port, err := cmd.Flags().GetInt("port")
 	if err != nil {
 		return errors.Wrap(err, "failed to get the 'port' value.")
 	}
 
 	inletsServer := server.Server{
-		Port:           port,
-		GatewayTimeout: gatewayTimeout,
-		Token:          token,
+		Port:  port,
+		Token: token,
 	}
 
 	inletsServer.Serve()

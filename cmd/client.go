@@ -3,7 +3,6 @@ package cmd
 import (
 	"log"
 	"strings"
-	"time"
 
 	"github.com/alexellis/inlets/pkg/client"
 	"github.com/pkg/errors"
@@ -15,7 +14,6 @@ func init() {
 	clientCmd.Flags().StringP("remote", "r", "127.0.0.1:8000", "server address i.e. 127.0.0.1:8000")
 	clientCmd.Flags().StringP("upstream", "u", "", "upstream server i.e. http://127.0.0.1:3000")
 	clientCmd.Flags().StringP("token", "t", "", "token for authentication")
-	clientCmd.Flags().DurationP("ping", "p", time.Second*10, "ping internal")
 }
 
 type UpstreamParser interface {
@@ -84,16 +82,10 @@ func runClient(cmd *cobra.Command, _ []string) error {
 		return errors.Wrap(err, "failed to get 'token' value.")
 	}
 
-	pingDuration, err := cmd.Flags().GetDuration("ping")
-	if err != nil {
-		return errors.Wrap(err, "failed to get 'ping' value.")
-	}
-
 	inletsClient := client.Client{
-		Remote:           remote,
-		UpstreamMap:      upstreamMap,
-		Token:            token,
-		PingWaitDuration: pingDuration,
+		Remote:      remote,
+		UpstreamMap: upstreamMap,
+		Token:       token,
 	}
 
 	if err := inletsClient.Connect(); err != nil {
