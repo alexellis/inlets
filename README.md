@@ -56,9 +56,11 @@ Unlike HTTP 1.1 which follows a synchronous request/response model websockets us
 * ~~There is no timeout for when the tunnel is disconnected~~ timeout can be configured via args on the server
 * ~~The upstream URL has to be configured on both server and client until a discovery or service advertisement mechanism is added~~ advertise on the client
 
-### Get `inlets`
+### Get started: Install the CLI
 
-Run this command:
+You can install the CLI with a `curl` utility script, `brew` or by downloading the binary from the releases page. Once installed you'll get the `inlets` command.
+
+Utility script with `curl`:
 
 ```bash
 # Install to local directory
@@ -66,6 +68,12 @@ curl -sLS https://get.inlets.dev | sh
 
 # Install to /usr/local/bin/
 curl -sLS https://get.inlets.dev | sudo sh
+```
+
+Via `brew`:
+
+```bash
+brew install inlets
 ```
 
 Binaries for Linux, Darwin (MacOS) and armhf are made available via the [releases page](https://github.com/alexellis/inlets/releases). You will also find SHA checksums available if you want to verify your download.
