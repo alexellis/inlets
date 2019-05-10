@@ -1,4 +1,5 @@
 sudo: required
+dist: xenial
 language: go
 
 go:
@@ -6,13 +7,20 @@ go:
 
 services:
 - docker
+
+addons:
+   apt:
+     packages:
+       - docker-ce
+
 script:
 - make docker
 - make dist
 
 after_success:
   - make docker-login
-  - make push
+  - make buildkitd
+  - make docker-buildkit-images
 
 before_deploy:
   - ./ci/hashgen.sh

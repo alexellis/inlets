@@ -1,0 +1,47 @@
+# BUILD* and TARGET* args are filled automatically
+# BUILD* means the platform of the node doing the build
+# TARGET* is the target platform of the build job
+
+# this stage is fixed to worker platform (linux/amd64 in this case)
+FROM --platform=$BUILDPLATFORM golang:1.10-alpine AS build
+
+# expose the values to the stage
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
+ARG GIT_COMMIT
+ARG VERSION
+
+# configure go to use target configuration
+ENV GOOS=$TARGETOS GOARCH=$TARGETARCH VARIANT_WITH_V=$TARGETVARIANT
+
+WORKDIR /go/src/github.com/alexellis/inlets
+
+COPY .git               .git
+COPY vendor             vendor
+COPY pkg                pkg
+COPY cmd                cmd
+COPY main.go            .
+
+RUN CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH GOARM=${VARIANT_WITH_V//v} \
+    go build \
+    -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" \
+    -a -installsuffix cgo -o /usr/bin/inlets
+
+# Will use the matching TARGET platform
+FROM alpine:3.9
+RUN apk add --force-refresh ca-certificates
+
+# Add non-root user
+RUN addgroup -S app && adduser -S -g app app \
+  && mkdir -p /home/app || : \
+  && chown -R app /home/app
+
+COPY --from=build /usr/bin/inlets /usr/bin/
+WORKDIR /home/app
+
+USER app
+EXPOSE 80
+
+ENTRYPOINT ["inlets"]
+CMD ["--help"]
