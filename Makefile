@@ -49,7 +49,7 @@ ifneq ($(BUILDKITD_CONTAINER_RUNNING),$(BUILDKITD_CONTAINER_NAME))
           --oci-worker-platform linux/amd64 \
           --oci-worker-platform linux/arm64 \
           --oci-worker-platform linux/armhf
-	docker cp $(BUILDKITD_CONTAINER_NAME):/usr/bin/buildctl /usr/bin/
+	sudo docker cp $(BUILDKITD_CONTAINER_NAME):/usr/bin/buildctl /usr/bin/
 endif
 endif
 
