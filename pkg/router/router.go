@@ -48,7 +48,7 @@ func (r *Router) Lookup(req *http.Request) *Route {
 	r.RLock()
 	defer r.RUnlock()
 
-	targets := r.domains[req.URL.Host]
+	targets := r.domains[req.Host]
 	if len(targets) == 0 {
 		targets = r.domains[""]
 	}
