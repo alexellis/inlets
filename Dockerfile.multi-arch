@@ -28,8 +28,26 @@ RUN CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH GOARM=${VARIANT_WITH_V//v} \
     -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" \
     -a -installsuffix cgo -o /usr/bin/inlets
 
-# Will use the matching TARGET platform
+# docker build/buildkit uses the matching TARGET platform
 FROM alpine:3.9
+RUN apk add --force-refresh ca-certificates
+
+# Add non-root user
+RUN addgroup -S app && adduser -S -g app app \
+  && mkdir -p /home/app || : \
+  && chown -R app /home/app
+
+COPY --from=build /usr/bin/inlets /usr/bin/
+WORKDIR /home/app
+
+USER app
+EXPOSE 80
+
+ENTRYPOINT ["inlets"]
+CMD ["--help"]
+
+# duplicated phase since armhf not found in the alpine:3.9 image manifest
+FROM arm32v6/alpine:3.9
 RUN apk add --force-refresh ca-certificates
 
 # Add non-root user
