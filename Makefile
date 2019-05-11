@@ -2,6 +2,8 @@ Version := $(shell git describe --tags --dirty)
 GitCommit := $(shell git rev-parse HEAD)
 LDFLAGS := "-s -w -X main.Version=$(Version) -X main.GitCommit=$(GitCommit)"
 PLATFORM := $(shell ./hack/platform-tag.sh)
+DOCKER_HUB_REPO ?= alexellis2/inlets
+BUILDKIT_PUSH_TO_REPO ?= true
 
 BUILDKIT_HOST ?= tcp://0.0.0.0:1234
 BUILDKITD_CONTAINER_NAME ?= buildkitd
@@ -16,8 +18,9 @@ BUILDKIT_COMMON_ARGS += --opt filename=./Dockerfile.multi-arch
 BUILDKIT_COMMON_ARGS += --opt build-arg:GIT_COMMIT=$(GitCommit)
 BUILDKIT_COMMON_ARGS += --opt build-arg:VERSION=$(Version)
 
-DOCKER_HUB_REPO ?= alexellis2/inlets
-BUILDKIT_PUSH_TO_REPO ?= true
+# This option is for running docker manifest command
+export DOCKER_CLI_EXPERIMENTAL := enabled
+export BUILDKIT_HOST
 
 .PHONY: all
 all: docker
@@ -53,18 +56,40 @@ ifneq ($(BUILDKITD_CONTAINER_RUNNING),$(BUILDKITD_CONTAINER_NAME))
 endif
 endif
 
-# push=true assumed logged into registry
+# push=true assumes valid authenticated login into registry
 .PHONY: docker-buildkit-images
 docker-buildkit-images:
-	BUILDKIT_HOST=$(BUILDKIT_HOST) buildctl build $(BUILDKIT_COMMON_ARGS) \
-          --opt platform=linux/amd64 \
-          --output type=image,name=docker.io/$(DOCKER_HUB_REPO):$(Version)-amd64,push=$(BUILDKIT_PUSH_TO_REPO)
-	BUILDKIT_HOST=$(BUILDKIT_HOST) buildctl build $(BUILDKIT_COMMON_ARGS) \
-          --opt platform=linux/arm64 \
-          --output type=image,name=docker.io/$(DOCKER_HUB_REPO):$(Version)-arm64,push=$(BUILDKIT_PUSH_TO_REPO)
-	BUILDKIT_HOST=$(BUILDKIT_HOST) buildctl build $(BUILDKIT_COMMON_ARGS) \
-          --opt platform=linux/armhf \
-          --output type=image,name=docker.io/$(DOCKER_HUB_REPO):$(Version)-armhf,push=$(BUILDKIT_PUSH_TO_REPO)
+	for arch in amd64 arm64 armhf; do \
+		buildctl build $(BUILDKIT_COMMON_ARGS) \
+          --opt platform=linux/$${arch} \
+          --output type=image,name=docker.io/$(DOCKER_HUB_REPO):$(Version)-$${arch},push=$(BUILDKIT_PUSH_TO_REPO) ; \
+	done
+
+# push tags for latest and create multi-arch image manifest
+.PHONY: docker-buildkit-push-manifests
+docker-buildkit-push-manifests:
+ifeq (true,$(BUILDKIT_PUSH_TO_REPO))
+	for arch in amd64 arm64 armhf; do \
+		docker pull $(DOCKER_HUB_REPO):$(Version)-$${arch} && \
+		docker tag $(DOCKER_HUB_REPO):$(Version)-$${arch} $(DOCKER_HUB_REPO):latest-$${arch} && \
+		docker push $(DOCKER_HUB_REPO):latest-$${arch} ; \
+	done
+	for version in $(Version) latest; do \
+		docker manifest create --amend $(DOCKER_HUB_REPO):$${version} \
+			$(DOCKER_HUB_REPO):$${version}-amd64 \
+			$(DOCKER_HUB_REPO):$${version}-arm64 \
+			$(DOCKER_HUB_REPO):$${version}-armhf && \
+		docker manifest annotate $(DOCKER_HUB_REPO):$${version} \
+			$(DOCKER_HUB_REPO):$${version}-armhf --os linux --arch arm   --variant v6 && \
+		docker manifest annotate $(DOCKER_HUB_REPO):$${version} \
+			$(DOCKER_HUB_REPO):$${version}-arm64 --os linux --arch arm64 --variant v8 && \
+		docker manifest push --purge $(DOCKER_HUB_REPO):$${version} ;\
+	done
+
+endif
+
+
+
 
 .PHONY: docker-login
 docker-login:

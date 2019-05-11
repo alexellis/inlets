@@ -21,6 +21,7 @@ after_success:
   - make docker-login
   - make buildkitd
   - make docker-buildkit-images
+  - make docker-buildkit-push-manifests
 
 before_deploy:
   - ./ci/hashgen.sh
