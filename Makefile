@@ -53,7 +53,8 @@ ifneq ($(BUILDKITD_CONTAINER_RUNNING),$(BUILDKITD_CONTAINER_NAME))
           --addr $(BUILDKIT_HOST) \
           --oci-worker-platform linux/amd64 \
           --oci-worker-platform linux/arm64 \
-          --oci-worker-platform linux/armhf
+          --oci-worker-platform linux/armhf \
+          --oci-worker-platform linux/arm32v6
 	sudo docker cp $(BUILDKITD_CONTAINER_NAME):/usr/bin/buildctl /usr/bin/
 endif
 endif

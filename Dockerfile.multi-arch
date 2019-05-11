@@ -28,27 +28,13 @@ RUN CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH GOARM=${VARIANT_WITH_V//v} \
     -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" \
     -a -installsuffix cgo -o /usr/bin/inlets
 
-# Docker buildkit will uses matching TARGET platform
-FROM alpine:3.9 AS docker-image
-RUN apk add --force-refresh ca-certificates
+# Stage 2: Build the runtime image
+FROM --platform=$TARGETPLATFORM alpine:3.9 AS docker-image
 
-# Add non-root user
-RUN addgroup -S app && adduser -S -g app app \
-  && mkdir -p /home/app || : \
-  && chown -R app /home/app
-
-COPY --from=build /usr/bin/inlets /usr/bin/
-WORKDIR /home/app
-
-USER app
-EXPOSE 80
-
-ENTRYPOINT ["inlets"]
-CMD ["--help"]
-
-# Duplicate stage due to armhf not being in alpine:3.9 image manifest
-FROM arm32v6/alpine:3.9 AS docker-image-arm32v6
-RUN apk add --force-refresh ca-certificates
+# Add certificate authority certs
+RUN apk add --no-cache --update \
+        ca-certificates \
+  && rm -rf /var/cache/apk/*
 
 # Add non-root user
 RUN addgroup -S app && adduser -S -g app app \
