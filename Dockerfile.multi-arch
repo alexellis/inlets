@@ -2,7 +2,7 @@
 # BUILD* means the platform of the node doing the build
 # TARGET* is the target platform of the build job
 
-# this stage is fixed to worker platform (linux/amd64 in this case)
+# build stage is affixed to worker platform (linux/amd64)
 FROM --platform=$BUILDPLATFORM golang:1.10-alpine AS build
 
 # expose the values to the stage
@@ -12,7 +12,7 @@ ARG TARGETVARIANT
 ARG GIT_COMMIT
 ARG VERSION
 
-# configure go to use target configuration
+# Configure golang to use target configuration
 ENV GOOS=$TARGETOS GOARCH=$TARGETARCH VARIANT_WITH_V=$TARGETVARIANT
 
 WORKDIR /go/src/github.com/alexellis/inlets
@@ -28,8 +28,8 @@ RUN CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH GOARM=${VARIANT_WITH_V//v} \
     -ldflags "-s -w -X main.GitCommit=${GIT_COMMIT} -X main.Version=${VERSION}" \
     -a -installsuffix cgo -o /usr/bin/inlets
 
-# docker build/buildkit uses the matching TARGET platform
-FROM alpine:3.9
+# Docker buildkit will uses matching TARGET platform
+FROM alpine:3.9 AS docker-image
 RUN apk add --force-refresh ca-certificates
 
 # Add non-root user
@@ -46,8 +46,8 @@ EXPOSE 80
 ENTRYPOINT ["inlets"]
 CMD ["--help"]
 
-# duplicated phase since armhf not found in the alpine:3.9 image manifest
-FROM arm32v6/alpine:3.9
+# Duplicate stage due to armhf not being in alpine:3.9 image manifest
+FROM arm32v6/alpine:3.9 AS docker-image-arm32v6
 RUN apk add --force-refresh ca-certificates
 
 # Add non-root user
