@@ -31,7 +31,7 @@ func (c *Client) Connect() error {
 	headers := http.Header{}
 	headers.Set(transport.InletsHeader, uuid.Formatter(uuid.NewV4(), uuid.FormatHex))
 	for k, v := range c.UpstreamMap {
-		headers.Set(transport.UpstreamHeader, fmt.Sprintf("%s=%s", k, v))
+		headers.Add(transport.UpstreamHeader, fmt.Sprintf("%s=%s", k, v))
 	}
 	if c.Token != "" {
 		headers.Add("Authorization", "Bearer "+c.Token)
