@@ -339,7 +339,26 @@ You can get a free domain-name with a .tk / .ml or .ga TLD from https://www.free
 
 ##### Digital Ocean
 
-If you're a DigitalOcean user and use `doctl` then you can provision a host with [./hack/provision-digitalocean.sh](./hack/provision-digitalocean.sh).  Please ensure you have configured `droplet.create.ssh-keys` within your `~/.config/doctl/config.yaml`.
+If you're a DigitalOcean user and use `doctl` then you can provision a host with [./hack/provision-digitalocean.sh](./hack/provision-digitalocean.sh).  Please ensure you have configured `droplet.create.ssh-keys` within your `~/.config/doctl/config.yaml`.  You will need the IDs of the keys you wish to deploy onto the droplet, there can be obtained by using:
+
+```sh
+$ doctl compute ssh-key list
+
+ID          Name      FingerPrint
+12345678    MY_Key    f0:ce:d0:22:dd:56:97:03:c3:f1:64:a6:5a:3f:8d:53
+```
+Your chosen key IDs then need to be added to the droplet create section:
+```yaml
+droplet:
+  actions:
+    ...
+  backups:
+    ...
+  create:
+    ...
+    ssh-keys: [12345678]
+    ...
+```
 
 DigitalOcean will then email you the IP and root password for your new host. You can use it to log in and get your auth token, so that you can connect your client after that.
 
