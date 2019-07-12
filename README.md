@@ -29,7 +29,7 @@ Sponsor Alex and get Insider Updates on all his OSS work via [GitHub Sponsors](h
 #### Initial goals:
 
 * automatically create endpoints on exit-node based upon client definitions
-  * multiplex sites on same port through use of DNS / host entries 
+  * multiplex sites on same port through use of DNS / host entries
 * link encryption using SSL over websockets (`wss://`)
 * automatic reconnect
 * authentication using service account or basic auth
@@ -52,11 +52,11 @@ Sponsor Alex and get Insider Updates on all his OSS work via [GitHub Sponsors](h
 
 ### Status
 
-Unlike HTTP 1.1 which follows a synchronous request/response model websockets use an asynchronous pub/sub model for sending and receiving messages. This presents a challenge for tunneling a synchronous protocol over an asynchronous bus. 
+Unlike HTTP 1.1 which follows a synchronous request/response model websockets use an asynchronous pub/sub model for sending and receiving messages. This presents a challenge for tunneling a synchronous protocol over an asynchronous bus.
 
 ~~This is a working prototype that can be used for testing, development and to generate discussion, but is not production-ready.~~
 
-inlets 2.0 introduces performance enhancements and leverages parts of Kubernetes and Rancher. It uses the same tunnelling technology of k3s. It is suitable for development and may be useful in production. Your feedback would be appreciated. 
+inlets 2.0 introduces performance enhancements and leverages parts of Kubernetes and Rancher. It uses the same tunnelling technology of k3s. It is suitable for development and may be useful in production. Your feedback would be appreciated.
 
 * The tunnel link is secured via `--token` flag and a shared secret
 * The default configuration uses websockets without SSL `ws://`, but to enable encryption you could enable SSL `wss://`
@@ -74,7 +74,7 @@ Using inlets I was able to get up a public endpoint with a custom domain name fo
 inlets has trended on the front page of Hacker News twice.
 
 * [inlets 1.0](https://news.ycombinator.com/item?id=19189455) - 146 points, 48 comments
-* [inlets 2.0](https://news.ycombinator.com/item?id=20410552) - 126 points, 42 comments, and counting
+* [inlets 2.0](https://news.ycombinator.com/item?id=20410552) - 206 points, 65 comments, and counting
 
 Twitter:
 
@@ -142,7 +142,7 @@ Install hash-browns or run your own HTTP server
 go get -u github.com/alexellis/hash-browns
 cd $GOPATH/src/github.com/alexellis/hash-browns
 
-port=3000 go run server.go 
+port=3000 go run server.go
 ```
 
 * On your machine behind the firewall
@@ -161,7 +161,7 @@ We now have an example service running (hash-browns), a tunnel server and a tunn
 
 So send a request to the public IP address or hostname:
 
-```sh 
+```sh
 inlets client --remote=192.168.0.101:80 --upstream  "gateway.mydomain.tk=http://127.0.0.1:3000"
 ```
 
@@ -176,7 +176,7 @@ curl -d "hash this" http://gateway.mydomain.tk/hash
 You will see the traffic pass between the exit node / server and your development machine. You'll see the hash message appear in the logs as below:
 
 ```sh
-~/go/src/github.com/alexellis/hash-browns$ port=3000 go run server.go 
+~/go/src/github.com/alexellis/hash-browns$ port=3000 go run server.go
 2018/12/23 20:15:00 Listening on port: 3000
 "hash this"
 ```
@@ -325,8 +325,8 @@ export INLETSTOKEN=$(head -c 16 /dev/urandom | shasum | cut -d" " -f1)
 If the token value is randomly generated then you will need to access the VPS in order to obtain the token value.
 
 ```sh
-cat /etc/default/inlets 
-```  
+cat /etc/default/inlets
+```
 
 #### How do I enable TLS / HTTPS?
 
@@ -401,7 +401,7 @@ Installation is currently manual and the datacenter is located in London. Create
 
 ##### Scaleway
 
-[Scaleway](https://www.scaleway.com/) offer probably the cheapest option at 1.99 EUR / month using the "1-XS" from the "Start" tier. 
+[Scaleway](https://www.scaleway.com/) offer probably the cheapest option at 1.99 EUR / month using the "1-XS" from the "Start" tier.
 
 If you have the Scaleway CLI installed you can provision a host with [./hack/provision-scaleway.sh](./hack/provision-scaleway.sh).
 
