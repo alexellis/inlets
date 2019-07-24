@@ -20,6 +20,8 @@ type Server struct {
 	Token  string
 	router router.Router
 	server *remotedialer.Server
+
+	DisableWrapTransport bool
 }
 
 // Serve traffic
@@ -56,7 +58,7 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	u.Host = r.Host
 	u.Scheme = route.Scheme
 
-	httpProxy := proxy.NewUpgradeAwareHandler(&u, route.Transport, true, false, s)
+	httpProxy := proxy.NewUpgradeAwareHandler(&u, route.Transport, !s.DisableWrapTransport, false, s)
 	httpProxy.ServeHTTP(w, r)
 }
 

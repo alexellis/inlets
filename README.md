@@ -67,6 +67,7 @@ Feel free to open issues if you have comments, suggestions or contributions.
 * The default configuration uses websockets without SSL `ws://`, but to enable encryption you could enable SSL `wss://`
 * A timeout for requests can be configured via args on the server
 * ~~The upstream URL has to be configured on both server and client until a discovery or service advertisement mechanism is added~~ The client can advertise upstream URLs, which it can serve
+* The tunnel transport is wrapped by default which strips CORS headers from responses, but you can disable it with the `--disable-transport-wrapping` flag on the server
 
 ### Video demo
 
