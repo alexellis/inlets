@@ -110,7 +110,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4ebfd72ba817efd42cb4be720c20c200d5a2f3694e8a3bd243b95d558fc5f423"
+  digest = "1:76b7462df9ed0229ba57a3040a5b2f6de603890d8041ad03cfe8db26bf83fd04"
   name = "golang.org/x/net"
   packages = [
     "html",
@@ -121,18 +121,18 @@
     "idna",
   ]
   pruneopts = "UT"
-  revision = "63eda1eb0650888965ead1296efd04d0b2b61128"
+  revision = "ca1201d0de80cfde86cb01aea620983605dfe99b"
 
 [[projects]]
   branch = "master"
-  digest = "1:6b3e6ddcebac95be1d690dbd53b5aa2e520715becb7e521bb526ccf3b4c53c15"
+  digest = "1:f99b0e9035cf86cdc14cb2848308e831193d5e19ab9a23a8493cd925bdc3952b"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "f49334f85ddcf0f08d7fb6dd7363e9e6d6b777eb"
+  revision = "fc99dfbffb4e5ed5758a37e31dd861afe285406b"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
