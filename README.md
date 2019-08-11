@@ -184,7 +184,7 @@ export REMOTE="127.0.0.1:8090"    # for testing inlets on your laptop, replace w
 export TOKEN="CLIENT-TOKEN-HERE"  # the client token is found on your VPS or on start-up of "inlets server"
 inlets client \
  --remote=$REMOTE \
- --upstream=http://127.0.0.1:3000
+ --upstream=http://127.0.0.1:3000 \
  --token $TOKEN
 ```
 
