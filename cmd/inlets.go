@@ -19,8 +19,13 @@ func init() {
 var inletsCmd = &cobra.Command{
 	Use:   "inlets",
 	Short: "Expose your local endpoints to the Internet.",
-	Long: `
-Inlets combines a reverse proxy and websocket tunnels to expose your internal and development 
+	Long: ` _       _      _            _
+(_)_ __ | | ___| |_ ___   __| | _____   __
+| | '_ \| |/ _ \ __/ __| / _` + "`" + ` |/ _ \ \ / /
+| | | | | |  __/ |_\__ \| (_| |  __/\ V /
+|_|_| |_|_|\___|\__|___(_)__,_|\___| \_/
+
+Inlets combines a reverse proxy and websocket tunnels to expose your internal and development
 endpoints to the public Internet via an exit-node.
 
 An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address.
@@ -30,6 +35,13 @@ See: https://github.com/alexellis/inlets for more information.`,
 }
 
 func parseBaseCommand(_ *cobra.Command, _ []string) {
+	var logo =  ` _       _      _            _
+(_)_ __ | | ___| |_ ___   __| | _____   __
+| | '_ \| |/ _ \ __/ __| / _` + "`" + ` |/ _ \ \ / /
+| | | | | |  __/ |_\__ \| (_| |  __/\ V /
+|_|_| |_|_|\___|\__|___(_)__,_|\___| \_/`
+
+	fmt.Println(logo)
 	if len(Version) == 0 {
 		fmt.Println("Version: dev")
 	} else {

@@ -52,7 +52,13 @@ func buildUpstreamMap(args string) map[string]string {
 var clientCmd = &cobra.Command{
 	Use:   "client",
 	Short: "Start the tunnel client.",
-	Long: `Start the tunnel client.
+	Long: ` _       _      _            _
+(_)_ __ | | ___| |_ ___   __| | _____   __
+| | '_ \| |/ _ \ __/ __| / _` + "`" + ` |/ _ \ \ / /
+| | | | | |  __/ |_\__ \| (_| |  __/\ V /
+|_|_| |_|_|\___|\__|___(_)__,_|\___| \_/
+
+Start the tunnel client.
 
 Example: inlets client --remote=192.168.0.101:80 --upstream=http://127.0.0.1:3000 
 Note: You can pass the --token argument followed by a token value to both the server and client to prevent unauthorized connections to the tunnel.`,

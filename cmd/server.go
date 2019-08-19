@@ -23,7 +23,13 @@ func init() {
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Start the tunnel server on a machine with a publicly-accessible IPv4 IP address such as a VPS.",
-	Long: `Start the tunnel server on a machine with a publicly-accessible IPv4 IP address such as a VPS.
+	Long: ` _       _      _            _
+(_)_ __ | | ___| |_ ___   __| | _____   __
+| | '_ \| |/ _ \ __/ __| / _` + "`" + ` |/ _ \ \ / /
+| | | | | |  __/ |_\__ \| (_| |  __/\ V /
+|_|_| |_|_|\___|\__|___(_)__,_|\___| \_/
+
+Start the tunnel server on a machine with a publicly-accessible IPv4 IP address such as a VPS.
 
 Example: inlets server -p 80 
 Note: You can pass the --token argument followed by a token value to both the server and client to prevent unauthorized connections to the tunnel.`,
