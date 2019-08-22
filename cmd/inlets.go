@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/morikuni/aec"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -30,6 +31,8 @@ See: https://github.com/alexellis/inlets for more information.`,
 }
 
 func parseBaseCommand(_ *cobra.Command, _ []string) {
+	printLogo()
+
 	if len(Version) == 0 {
 		fmt.Println("Version: dev")
 	} else {
@@ -52,3 +55,16 @@ func Execute(version, gitCommit string) error {
 	}
 	return nil
 }
+
+func printLogo() {
+	inletsLogo := aec.WhiteF.Apply(inletsFigletStr)
+	fmt.Println(inletsLogo)
+}
+
+
+const inletsFigletStr = ` _       _      _            _
+(_)_ __ | | ___| |_ ___   __| | _____   __
+| | '_ \| |/ _ \ __/ __| / _` + "`" + ` |/ _ \ \ / /
+| | | | | |  __/ |_\__ \| (_| |  __/\ V /
+|_|_| |_|_|\___|\__|___(_)__,_|\___| \_/
+`
