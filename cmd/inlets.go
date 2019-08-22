@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	inletsCmd.Flags().BoolP("version", "v", false, "print the version information")
+	inletsCmd.AddCommand(versionCmd)
 }
 
 // inletsCmd represents the base command when called without any sub commands.
@@ -27,6 +27,12 @@ endpoints to the public Internet via an exit-node.
 An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address.
 
 See: https://github.com/alexellis/inlets for more information.`,
+	Run: runInlets,
+}
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Display the clients version information.",
 	Run: parseBaseCommand,
 }
 
@@ -54,6 +60,11 @@ func Execute(version, gitCommit string) error {
 		return err
 	}
 	return nil
+}
+
+func runInlets(cmd *cobra.Command, args []string) {
+	printLogo()
+	cmd.Help()
 }
 
 func printLogo() {
