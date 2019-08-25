@@ -572,6 +572,50 @@ If you have the Scaleway CLI installed you can provision a host with [./hack/pro
 
 Datacenters include: Paris and Amsterdam.
 
+##### AWS Lightsail
+
+AWS Lightsail is the lowest cost AWS VPS solution, nano instances cost 3.50 USD
+/ month. The script
+[./hack/provision-aws-lightsail-terraform.sh](./hack/provision-aws-lightsail-terraform.sh)
+will create an ssh keypair to be used on Lightsail then launch an instance and
+start the Inlets server. The bash script calls Terraform from the repository
+[mbacchi/inlets-aws-terraform](https://github.com/mbacchi/inlets-aws-terraform).
+By default Lightsail only allows port 22(SSH) and port 80(HTTP), so we bind
+Inlets to port 80. To open port 443(HTTPS) use the command `aws lightsail
+open-instance-public-ports --port-info fromPort=443,toPort=443,protocol=tcp
+--instance-name=INSTANCE_NAME` after the Terraform module has created the
+instance(at least until [Terraform PR
+8611](https://github.com/terraform-providers/terraform-provider-aws/pull/8611)
+allows this to be controlled via the Terraform AWS provider).
+
+Read more about the terraform module in the
+[README](https://github.com/mbacchi/inlets-aws-terraform/tree/master/terraform/lightsail).
+
+An example command to run this script would look like:
+
+```
+./provision-aws-lightsail-terraform.sh lightsail_keypair AWS_PROFILE us-east-2 http://127.0.0.1:4000
+```
+
+##### AWS EC2
+
+AWS EC2 is more expensive than Lightsail (and other VPS solutions,) but allows
+for more control and configurability of ports and IAM permissions. By default we
+use a `t2.micro` instance type for the lowest cost instance specifications. The
+bash script calls Terraform from the repository
+[mbacchi/inlets-aws-terraform](https://github.com/mbacchi/inlets-aws-terraform).
+It provides default settings that allow port 22(SSH) and port 8090(Inlets), but
+you could open additional ports if desired.
+
+Read more about the terraform module in the
+[README](https://github.com/mbacchi/inlets-aws-terraform/tree/master/terraform/ec2).
+
+An example command to run this script would look like:
+
+```
+./provision-aws-ec2-terraform.sh new-keypair-inlets AWS_PROFILE us-east-2 http://127.0.0.1:4000
+```
+
 #### Running over an SSH tunnel
 
 You can tunnel over SSH if you are not using a reverse proxy that enables SSL. This encrypts the traffic over the tunnel.
