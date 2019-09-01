@@ -10,15 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	inletsCmd.AddCommand(serverCmd)
-	serverCmd.Flags().IntP("port", "p", 8000, "port for server")
-	serverCmd.Flags().StringP("token", "t", "", "token for authentication")
-	serverCmd.Flags().Bool("print-token", true, "prints the token in server mode")
-	serverCmd.Flags().StringP("token-from", "f", "", "read the authentication token from a file")
-	serverCmd.Flags().Bool("disable-transport-wrapping", false, "disable wrapping the transport that removes CORS headers for example")
-}
-
 // serverCmd represents the server sub command.
 var serverCmd = &cobra.Command{
 	Use:   "server",
@@ -26,8 +17,21 @@ var serverCmd = &cobra.Command{
 	Long: `Start the tunnel server on a machine with a publicly-accessible IPv4 IP address such as a VPS.
 
 Example: inlets server -p 80 
+Example: inlets server --port 80 --control-port 8080
 Note: You can pass the --token argument followed by a token value to both the server and client to prevent unauthorized connections to the tunnel.`,
 	RunE: runServer,
+}
+
+func init() {
+
+	serverCmd.Flags().IntP("port", "p", 8000, "port for server and for tunnel")
+	serverCmd.Flags().StringP("token", "t", "", "token for authentication")
+	serverCmd.Flags().Bool("print-token", true, "prints the token in server mode")
+	serverCmd.Flags().StringP("token-from", "f", "", "read the authentication token from a file")
+	serverCmd.Flags().Bool("disable-transport-wrapping", false, "disable wrapping the transport that removes CORS headers for example")
+	serverCmd.Flags().IntP("control-port", "c", 8080, "control port for tunnel")
+
+	inletsCmd.AddCommand(serverCmd)
 }
 
 // runServer does the actual work of reading the arguments passed to the server sub command.
@@ -67,16 +71,22 @@ func runServer(cmd *cobra.Command, _ []string) error {
 		return errors.Wrap(err, "failed to get the 'port' value.")
 	}
 
+	controlPort, err := cmd.Flags().GetInt("control-port")
+	if err != nil {
+		return errors.Wrap(err, "failed to get the 'control-port' value.")
+	}
+
 	disableWrapTransport, err := cmd.Flags().GetBool("disable-transport-wrapping")
 	if err != nil {
 		return errors.Wrap(err, "failed to get the 'disable-transport-wrapping' value.")
 	}
 
-	fmt.Printf("Welcome to inlets.dev! Find out more at https://github.com/alexellis/inlets\n\n")
+	fmt.Printf(WelcomeMessage)
 
 	inletsServer := server.Server{
-		Port:  port,
-		Token: token,
+		Port:        port,
+		ControlPort: controlPort,
+		Token:       token,
 
 		DisableWrapTransport: disableWrapTransport,
 	}

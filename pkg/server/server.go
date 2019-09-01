@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/alexellis/inlets/pkg/router"
@@ -16,25 +17,73 @@ import (
 
 // Server for the exit-node of inlets
 type Server struct {
-	Port   int
-	Token  string
+
+	// Port serves data to clients
+	Port int
+
+	// ControlPort represents the tunnel to the inlets client
+	ControlPort int
+
+	// Token is used to authenticate a client
+	Token string
+
 	router router.Router
 	server *remotedialer.Server
 
+	// DisableWrapTransport prevents CORS headers from being striped from responses
 	DisableWrapTransport bool
 }
 
 // Serve traffic
 func (s *Server) Serve() {
-	s.server = remotedialer.New(s.authorized, remotedialer.DefaultErrorWriter)
-	s.router.Server = s.server
+	if s.ControlPort == s.Port {
+		s.server = remotedialer.New(s.authorized, remotedialer.DefaultErrorWriter)
+		s.router.Server = s.server
 
-	http.HandleFunc("/", s.proxy)
-	http.HandleFunc("/tunnel", s.tunnel)
+		http.HandleFunc("/", s.proxy)
+		http.HandleFunc("/tunnel", s.tunnel)
 
-	log.Printf("Listening on :%d\n", s.Port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), nil); err != nil {
-		log.Fatal(err)
+		log.Printf("Listening on :%d\n", s.Port)
+		if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), nil); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+
+		wg := sync.WaitGroup{}
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+
+			controlServer := http.NewServeMux()
+			s.server = remotedialer.New(s.authorized, remotedialer.DefaultErrorWriter)
+			s.router.Server = s.server
+
+			controlServer.HandleFunc("/tunnel", s.tunnel)
+
+			log.Printf("Control Plane Listening on :%d\n", s.ControlPort)
+			if err := http.ListenAndServe(fmt.Sprintf(":%d", s.ControlPort), controlServer); err != nil {
+				log.Fatal(err)
+			}
+
+		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			controlServer := http.NewServeMux()
+			controlServer.HandleFunc("/", s.proxy)
+
+			http.HandleFunc("/", s.proxy)
+			log.Printf("Data Plane Listening on :%d\n", s.Port)
+
+			if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), controlServer); err != nil {
+				log.Fatal(err)
+			}
+		}()
+
+		wg.Wait()
 	}
 }
 
