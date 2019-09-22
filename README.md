@@ -312,16 +312,19 @@ You can run the client inside Kubernetes to expose your local services to the In
 Here's an example showing how to get ingress into your cluster for your OpenFaaS gateway and for Prometheus:
 
 ```yaml
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inlets
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inlets
   template:
     metadata:
       labels:
-        app: inlets
+        app.kubernetes.io/name: inlets
     spec:
       containers:
       - name: inlets
@@ -362,16 +365,19 @@ secret/inlets-token created
 * Bind the secret named `inlets-token` to the Deployment:
 
 ```yaml
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inlets
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inlets
   template:
     metadata:
       labels:
-        app: inlets
+        app.kubernetes.io/name: inlets
     spec:
       containers:
       - name: inlets
@@ -440,16 +446,19 @@ spec:
 * Create a `Deployment`:
 
 ```yaml
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inlets
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inlets
   template:
     metadata:
       labels:
-        app: inlets
+        app.kubernetes.io/name: inlets
     spec:
       containers:
       - name: inlets
