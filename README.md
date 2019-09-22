@@ -478,6 +478,7 @@ spec:
 ```
 
 You can now create an `Ingress` record, or `LoadBalancer` to connect to your server.
+Note that clients connecting to this server will have to specify port 8000 for their remote, as the default is 80.
 
 #### Try inlets with KinD (Kubernetes in Docker)
 
