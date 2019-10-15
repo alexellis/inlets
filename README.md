@@ -306,12 +306,9 @@ You can bind two separate TCP ports for the user-facing port and the tunnel.
 
 ### Docker & Kubernetes application development
 
-Docker images are published for `x86_64` and `armhf`
+Docker images are published as multi-arch for `x86_64`, `arm64` and `armhf`
 
-* `alexellis2/inlets:2.3.2`
-* `alexellis2/inlets:2.3.2-armhf`
-
-> Note: For Raspberry Pi, you need to use the image ending in `-armhf`.
+* `alexellis2/inlets:2.5.2`
 
 #### Run as a deployment on Kubernetes
 
@@ -336,7 +333,7 @@ spec:
     spec:
       containers:
       - name: inlets
-        image: alexellis2/inlets:2.3.2
+        image: alexellis2/inlets:2.5.2
         imagePullPolicy: Always
         command: ["inlets"]
         args:
@@ -348,8 +345,6 @@ spec:
 Replace the line: `- "--remote=your-public-ip"` with the public IP belonging to your VPS.
 
 Alternatively, see the unofficial helm chart from the community: [inlets-helm](https://github.com/paurosello/inlets_helm).
-
-> Note: For Raspberry Pi, you need to use the image ending in `-armhf`.
 
 #### Use authentication from a Kubernetes secret
 
@@ -389,7 +384,7 @@ spec:
     spec:
       containers:
       - name: inlets
-        image: alexellis2/inlets:2.3.2
+        image: alexellis2/inlets:2.5.2
         imagePullPolicy: Always
         command: ["inlets"]
         args:
@@ -470,7 +465,7 @@ spec:
     spec:
       containers:
       - name: inlets
-        image: alexellis2/inlets:2.3.2
+        image: alexellis2/inlets:2.5.2
         imagePullPolicy: Always
         command: ["inlets"]
         args:
