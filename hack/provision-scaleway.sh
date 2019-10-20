@@ -8,7 +8,7 @@ echo "Creating: $NAME"
 
 rm ~/.scw-cache.db
 
-scw --region=$REGION run --detach -u="cloud-init=@$USERDATA" --commercial-type=START1-XS --name=$NAME ubuntu-mini-xenial-25g
+scw --region=$REGION run --detach -u="cloud-init=@$USERDATA" --commercial-type=START1-XS --name=$NAME Ubuntu_Bionic
 
 for i in {0..100};
 do
@@ -28,6 +28,3 @@ do
     break
   fi
 done
-
-
-
