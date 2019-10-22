@@ -4,6 +4,7 @@
 export OWNER=inlets
 export REPO=inlets
 export SUCCESS_CMD="$REPO version"
+export BINLOCATION="/usr/local/bin"
 
 version=$(curl -sI https://github.com/$OWNER/$REPO/releases/latest | grep Location | awk -F"/" '{ printf "%s", $NF }' | tr -d '\r')
 
@@ -13,7 +14,7 @@ if [ ! $version ]; then
     echo "1. Open your web browser and go to https://github.com/$OWNER/$REPO/releases"
     echo "2. Download the latest release for your platform. Call it '$REPO'."
     echo "3. chmod +x ./$REPO"
-    echo "4. mv ./$REPO /usr/local/bin"
+    echo "4. mv ./$REPO $BINLOCATION"
     exit 1
 fi
 
@@ -83,26 +84,27 @@ getPackage() {
 
     echo "Download complete."
 
-        if [ "$userid" != "0" ]; then
+        if [ ! -w "$BINLOCATION" ]; then
 
             echo
-            echo "========================================================="
-            echo "==    As the script was run as a non-root user the     =="
-            echo "==    following commands may need to be run manually   =="
-            echo "========================================================="
+            echo "============================================================"
+            echo "==   The script was run as a user who is unable to write  =="
+            echo "==   to $BINLOCATION. To complete the installation the  =="
+            echo "==   following commands may need to be run manually.      =="
+            echo "============================================================"
             echo
-            echo "  sudo cp $REPO$suffix /usr/local/bin/$REPO"
+            echo "  sudo cp $REPO$suffix $BINLOCATION/$REPO"
             echo
             ./$REPO$suffix version
         else
 
             echo
-            echo "Running as root - Attempting to move $REPO to /usr/local/bin"
+            echo "Running with sufficient permissions to attempt to move $REPO to $BINLOCATION"
 
-            mv $targetFile /usr/local/bin/$REPO
+            mv $targetFile $BINLOCATION/$REPO
 
             if [ "$?" = "0" ]; then
-                echo "New version of $REPO installed to /usr/local/bin"
+                echo "New version of $REPO installed to $BINLOCATION"
             fi
 
             if [ -e $targetFile ]; then
