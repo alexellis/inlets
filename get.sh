@@ -20,17 +20,6 @@ fi
 
 hasCli() {
 
-    has=$(which $REPO)
-
-    if [ "$?" = "0" ]; then
-        echo
-        echo "You already have the $REPO cli!"
-        export n=1
-        echo "Overwriting in $n seconds.. Press Control+C to cancel."
-        echo
-        sleep $n
-    fi
-
     hasCurl=$(which curl)
     if [ "$?" = "1" ]; then
         echo "You need curl to use this script."
