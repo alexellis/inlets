@@ -125,7 +125,7 @@ kind: Service
 metadata:
   name: inlets
   labels:
-    app: inlets
+    app.kubernetes.io/name: inlets
 spec:
   type: ClusterIP
   ports:
@@ -133,7 +133,7 @@ spec:
       protocol: TCP
       targetPort: 8000
   selector:
-    app: inlets
+    app.kubernetes.io/name: inlets
 ```
 
 * Create a `Deployment`:
