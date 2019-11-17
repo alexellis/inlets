@@ -1,0 +1,67 @@
+### Keybase proof
+
+I hereby claim:
+
+  * I am obaldeyet on github.
+  * I am obaldeyet (https://keybase.io/obaldeyet) on keybase.
+  * I have a public key ASAVgfsOTU14TFQjR12Wmyhc1I8NtegBYT5TRzKqXRBLFQo
+
+To claim this, I am signing this object:
+
+```json
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01201581fb0e4d4d784c5423475d969b285cd48f0db5e801613e534732aa5d104b150a",
+      "host": "keybase.io",
+      "kid": "01201581fb0e4d4d784c5423475d969b285cd48f0db5e801613e534732aa5d104b150a",
+      "uid": "fe9ce3eddf7f81825b0b0fb5b97b9319",
+      "username": "obaldeyet"
+    },
+    "merkle_root": {
+      "ctime": 1573984994,
+      "hash": "8158f5606bb9a70300eb27b5a912c80db5596c7c02e0d852d61cbb608cde8104eac88d43f1ff454f4f9baeee0fd441e01faf50942e3a46552abd92c6a1d7348d",
+      "hash_meta": "ca1e30c1eb1a787f9e1d7fe018ab146f3e5340782c452995034ac7d0a1ba69c3",
+      "seqno": 9917777
+    },
+    "service": {
+      "entropy": "6BIgQCz5OXZDa6ncBEzP8U3H",
+      "name": "github",
+      "username": "obaldeyet"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "5.0.0"
+  },
+  "ctime": 1573985013,
+  "expire_in": 504576000,
+  "prev": "0a95242900b38d8ef20658c62c539a86c6e110826d902934371c61a8fb813d14",
+  "seqno": 8,
+  "tag": "signature"
+}
+```
+
+with the key [ASAVgfsOTU14TFQjR12Wmyhc1I8NtegBYT5TRzKqXRBLFQo](https://keybase.io/obaldeyet), yielding the signature:
+
+```
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgFYH7Dk1NeExUI0ddlpsoXNSPDbXoAWE+U0cyql0QSxUKp3BheWxvYWTESpcCCMQgCpUkKQCzjY7yBljGLFOahsbhEIJtkCk0NxxhqPuBPRTEIDLZg0UFNvjcZb7JV1R/+AunwRsZM5Dh/5onqIuOHjbxAgHCo3NpZ8RAaYFeh+qSsauWAsB2u24OprReR3zMwCeYkKJZgkESXSmrDKygogtOae6Ru45/obRPfCR2qugbO4OTk69MS5hOAKhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIM7O+ISCIn1cUzYvhnyAtDvr0QxHxrxp1wwmHPFQ5mZto3RhZ80CAqd2ZXJzaW9uAQ==
+
+```
+
+And finally, I am proving ownership of the github account by posting this as a gist.
+
+### My publicly-auditable identity:
+
+https://keybase.io/obaldeyet
+
+### From the command line:
+
+Consider the [keybase command line program](https://keybase.io/download).
+
+```bash
+# look me up
+keybase id obaldeyet
+```
