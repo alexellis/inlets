@@ -1,17 +1,17 @@
 # inlets
 
-Expose your local endpoints to the Internet
+Expose your local endpoints to the Internet.
 
 [![Build Status](https://travis-ci.org/inlets/inlets.svg?branch=master)](https://travis-ci.org/inlets/inlets) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Go Report Card](https://goreportcard.com/badge/github.com/inlets/inlets)](https://goreportcard.com/report/github.com/inlets/inlets) [![Documentation](https://godoc.org/github.com/inlets/inlets?status.svg)](http://godoc.org/github.com/inlets/inlets) [![Derek App](https://alexellis.o6s.io/badge?owner=inlets&repo=inlets)](https://github.com/alexellis/derek/)
 [![Setup Automated](https://img.shields.io/badge/setup-automated-blue?logo=gitpod)](https://gitpod.io/from-referrer/)
 
 ## Intro
 
-inlets combines a reverse proxy and websocket tunnels to expose your internal and development endpoints to the public Internet via an exit-node. An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address.
+inlets combines reverse proxies with websocket tunnels to expose your internal and development endpoints to the public Internet via an exit-node. An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address.
 
 Why do we need this project? Similar tools such as [ngrok](https://ngrok.com/) or [Argo Tunnel](https://developers.cloudflare.com/argo-tunnel/) from [Cloudflare](https://www.cloudflare.com/) are closed-source, have limits built-in, can work out expensive, and have limited support for arm/arm64. Ngrok is also often banned by corporate firewall policies meaning it can be unusable. Other open-source tunnel tools are designed to only set up a single static tunnel. inlets aims to dynamically bind and discover your local services to DNS entries with automated TLS certificates to a public IP address over a websocket tunnel.
 
-When combined with SSL - inlets can be used with any corporate HTTP proxy which supports `CONNECT`.
+When combined with SSL, inlets can be used with any corporate HTTP proxy which supports `CONNECT`.
 
 ![](docs/inlets.png)
 
@@ -27,13 +27,13 @@ Developers wishing to use inlets within a corporate network are advised to seek 
 
 inlets is brought to you by [Alex Ellis](https://twitter.com/alexellisuk). Alex is a [CNCF Ambassador](https://www.cncf.io/people/ambassadors/) and the founder of [OpenFaaS](https://github.com/openfaas/faas/).
 
-> [OpenFaaS&reg;](https://github.com/openfaas/faas) makes it easy for developers to deploy event-driven functions and microservices to Kubernetes without repetitive, boiler-plate coding. Package your code or an existing binary in a Docker image to get a highly scalable endpoint with auto-scaling and metrics. The project has around 19k GitHub stars, over 240 contributors and a growing number of end-users in production.
+> [OpenFaaS&reg;](https://github.com/openfaas/faas) makes it easy for developers to deploy event-driven functions and microservices to Kubernetes without repetitive coding. Package your code or an existing binary in a Docker image to get a highly scalable endpoint with auto-scaling and metrics. The project has around 19k GitHub stars, over 240 contributors and a growing number of end-users in production.
 
 ### Backlog & goals
 
 #### Completed
 
-* automatically create endpoints on exit-node based upon client definitions
+* automatically create endpoints on exit-node based on client definitions
   * multiplex sites on same port and websocket through the use of DNS / host entries
 * link encryption using SSL over websockets (`wss://`)
 * automatic reconnect
@@ -174,7 +174,7 @@ Note down your public IPv4 IP address.
 
 * Head over to your machine where you are running a sample service, or something you want to expose.
 
-You can use my hash-browns service for instance which generates hashes.
+You can use my hash-browns service for an instance which generates hashes.
 
 Install hash-browns or run your own HTTP server
 
@@ -320,7 +320,7 @@ go get -u github.com/inlets/inlets
 cd $GOPATH/src/github.com/inlets/inlets
 ```
 
-Alternatively, you can get everything setup right in the browser with a single click using [Gitpod](https://gitpod.io):
+Alternatively, you can get everything set up in the browser with a single click using [Gitpod](https://gitpod.io):
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/inlets/inlets)
 
