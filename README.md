@@ -80,7 +80,7 @@ Inlets is [listed on the Cloud Native Landscape](https://landscape.cncf.io/categ
 * [inlets-pro](https://github.com/inlets/inlets-pro-pkg) - L4 TCP load-balancer
 * [inlets-operator](https://github.com/inlets/inlets-operator) - deep integration for inlets in Kubernetes, expose Service type LoadBalancer
 * [inletsctl](https://github.com/inlets/inletsctl) - CLI tool to provision exit-nodes for use with inlets or inlets-pro
-* [kubefwd](https://github.com/txn2/kubefwd) - Bluk port-forward multiple services with hostnames to a local workstation. 
+* [kubefwd](https://github.com/txn2/kubefwd) - Bulk port-forward multiple services with hostnames to a local workstation. 
 
 ### What are people saying about inlets?
 
