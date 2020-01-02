@@ -99,6 +99,7 @@ Tutorials:
 * [Exposing Magnificent Image Classifier with inlets](https://blog.baeke.info/2019/07/17/exposing-a-local-endpoint-with-inlets/)
 * ["Securely access external applications as Kubernetes Services, from your laptop or from any other host, using inlets"](https://twitter.com/BanzaiCloud/status/1164168218954670080)
 * [Using local services in Gitpod with inlets](https://www.gitpod.io/blog/local-services-in-gitpod/)
+* [Setting up an EC2 Instance as an Inlets Exit Node](https://mbacchi.github.io/2019/08/21/inlets-aws-ec2.html)
 
 Twitter:
 
