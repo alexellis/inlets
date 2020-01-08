@@ -337,3 +337,5 @@ Other Kubernetes port-forwarding tooling:
 * [`kubectl port-forward`](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) - built into the Kubernetes CLI, forwards a single port to the local computer.
 * [kubefwd](https://github.com/txn2/kubefwd) - Kubernetes utility to port-forward multiple services to your local computer.
 * [kurun](https://github.com/banzaicloud/kurun) - Run main.go in Kubernetes with one command, also port-forward your app into Kubernetes.
+* [monday](https://github.com/eko/monday) - A dev tool for microservice developers to run local applications and/or forward others from/to Kubernetes SSH or TCP.
+* [kt-connect](https://github.com/alibaba/kt-connect) - Management and Integration with your Kubernetes dev environment more efficient.
