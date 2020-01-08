@@ -5,6 +5,8 @@ Expose your local endpoints to the Internet
 [![Build Status](https://travis-ci.org/inlets/inlets.svg?branch=master)](https://travis-ci.org/inlets/inlets) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Go Report Card](https://goreportcard.com/badge/github.com/inlets/inlets)](https://goreportcard.com/report/github.com/inlets/inlets) [![Documentation](https://godoc.org/github.com/inlets/inlets?status.svg)](http://godoc.org/github.com/inlets/inlets) [![Derek App](https://alexellis.o6s.io/badge?owner=inlets&repo=inlets)](https://github.com/alexellis/derek/)
 [![Setup Automated](https://img.shields.io/badge/setup-automated-blue?logo=gitpod)](https://gitpod.io/from-referrer/)
 
+[English](./README.md) | [中文文档](./README_CN.md)
+
 ## Intro
 
 inlets combines a reverse proxy and websocket tunnels to expose your internal and development endpoints to the public Internet via an exit-node. An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address.
@@ -312,7 +314,7 @@ You can bind two separate TCP ports for the user-facing port and the tunnel.
 * `--port` - the port for users to connect to and for serving data, i.e. the *Data Plane*
 * `--control-port` - the port for the websocket to connect to i.e. the *Control Plane*
 
-## Development
+### Development
 
 For development you will need Golang 1.10 or 1.11 on both the exit-node or server and the client.
 
