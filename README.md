@@ -299,7 +299,7 @@ Using inlets I was able to set up a public endpoint (with a custom domain name) 
 
 Docker images are published as multi-arch for `x86_64`, `arm64` and `armhf`
 
-* `inlets/inlets:2.6.3
+* `inlets/inlets:2.6.3`
 
 ### Multiple services with on exit-node
 

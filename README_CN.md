@@ -300,7 +300,7 @@ inlets client \
 
 适用于多种架构的 Docker 镜像已发布，支持 `x86_64`, `arm64` and `armhf`。
 
-* `inlets/inlets:2.6.3
+* `inlets/inlets:2.6.3`
 
 ### 单出口节点多服务
 
