@@ -278,7 +278,7 @@ inlets client \
  --upstream="store1.example.com=http://127.0.0.1:8001,store2.example.com=http://127.0.0.1:8002"
 ```
 
-You can now create two DNS entries or `/etc/hosts` file entries for `store1.example.com` and `store2.example.com`, then connet through your browser.
+You can now create two DNS entries or `/etc/hosts` file entries for `store1.example.com` and `store2.example.com`, then connect through your browser.
 
 ## Going further
 
