@@ -188,13 +188,9 @@ You can use my hash-browns service for instance which generates hashes.
 Install hash-browns or run your own HTTP server
 
 ```sh
-export GO111MODULE=off
-export GOPATH=$HOME/go/
-
 go get -u github.com/alexellis/hash-browns
-cd $GOPATH/src/github.com/alexellis/hash-browns
 
-port=3000 go run server.go
+port=3000 ${GOPATH}/bin/hash-browns
 ```
 
 If you don't have Go installed, then you could run [Python's built-in HTTP server](https://docs.python.org/2/library/simplehttpserver.html):
