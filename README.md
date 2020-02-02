@@ -107,6 +107,8 @@ Community tutorials:
 * [Setting up an EC2 Instance as an Inlets Exit Node](https://mbacchi.github.io/2019/08/21/inlets-aws-ec2.html)
 * [Micro-tutorial inlets with KinD by Alex Ellis](https://gist.github.com/alexellis/c29dd9f1e1326618f723970185195963)
 * [Using local services in Gitpod with inlets](https://www.gitpod.io/blog/local-services-in-gitpod/)
+* [Scheduling Kubernetes workloads to Raspberry Pi using Inlets and Crossplane](https://github.com/crossplaneio/tbs/blob/master/episodes/9/assets/README.md) by [Daniel Mangum](https://github.com/hasheddan)
+  * Also checkout the live [demo](https://youtu.be/RVAFEAnirZA)
 
 Twitter:
 
