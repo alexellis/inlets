@@ -99,7 +99,10 @@ func runClient(cmd *cobra.Command, _ []string) error {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("unable to load file: %s", tokenFile))
 		}
-		token = string(fileData)
+
+		// new-lines will be stripped, this is not configurable and is to
+		// make the code foolproof for beginners
+		token = strings.TrimRight(string(fileData), "\n")
 	} else {
 		tokenVal, err := cmd.Flags().GetString("token")
 		if err != nil {
