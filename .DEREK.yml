@@ -1,7 +1,11 @@
-maintainers:
+curators:
  - alexellis
  - Waterdrips
- 
+ - adamjohnson01
+ - utsavanand2
+ - matevzmihalic
+ - blackjid
+
 features:
  - dco_check
  - comments
