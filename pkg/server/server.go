@@ -129,7 +129,7 @@ func (s *Server) dialerFor(id, host string) remotedialer.Dialer {
 
 func (s *Server) tokenValid(req *http.Request) bool {
 	auth := req.Header.Get("Authorization")
-	return subtle.ConstantTimeCompare([]byte(auth), []byte("Bearer "+s.Token)) == 1
+	return len(s.Token) == 0 || subtle.ConstantTimeCompare([]byte(auth), []byte("Bearer "+s.Token)) == 1
 }
 
 func (s *Server) authorized(req *http.Request) (id string, ok bool, err error) {

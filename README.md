@@ -199,7 +199,7 @@ Example with a token for client authentication:
 
 ```bash
 export token=$(head -c 16 /dev/urandom | shasum | cut -d" " -f1)
-inlets server --port=8090 --token="$token"
+inlets server --port=8090 --token=$token
 ```
 
 > Note: You can pass the `--token` argument followed by a token value to both the server and client to prevent unauthorized connections to the tunnel.
@@ -246,7 +246,7 @@ export TOKEN="CLIENT-TOKEN-HERE"  # the client token is found on your VPS or on 
 inlets client \
  --remote=$REMOTE \
  --upstream=http://127.0.0.1:3000 \
- --token $TOKEN
+ --token=$TOKEN
 ```
 
 * Replace the `--remote` with the address where your exit-node is running `inlets server`.
@@ -305,8 +305,8 @@ export REMOTE="127.0.0.1:8090"    # for testing inlets on your laptop, replace w
 export TOKEN="CLIENT-TOKEN-HERE"  # the client token is found on your VPS or on start-up of "inlets server"
 inlets client \
  --remote=$REMOTE \
- --token $TOKEN \
- --upstream="store1.example.com=http://127.0.0.1:8001,store2.example.com=http://127.0.0.1:8002"
+ --upstream="store1.example.com=http://127.0.0.1:8001,store2.example.com=http://127.0.0.1:8002" \
+ --token=$TOKEN
 ```
 
 You can now create two DNS entries or `/etc/hosts` file entries for `store1.example.com` and `store2.example.com`, then connect through your browser.

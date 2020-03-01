@@ -33,3 +33,15 @@ func Test_tokenValid_Invalid(t *testing.T) {
 		t.Error("expected isTokenValid to be false")
 	}
 }
+
+func Test_emptyToken_Valid(t *testing.T) {
+	token := ""
+	s := &Server{Token: token}
+	r, err := http.NewRequest(http.MethodGet, "/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+	if !s.tokenValid(r) {
+		t.Error("expected isTokenValid to be true")
+	}
+}
