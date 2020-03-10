@@ -18,3 +18,7 @@
   name = "github.com/morikuni/aec"
   branch = "master"
 
+[[constraint]]
+  name = "github.com/rancher/remotedialer"
+  version = "v0.2.5"
+
