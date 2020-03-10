@@ -2,7 +2,7 @@ sudo: required
 language: go
 
 go:
-- "1.12"
+- "1.13"
 
 services:
 - docker
@@ -37,5 +37,5 @@ deploy:
   on:
     tags: true
 
-env:
-  - GO111MODULE=off
+env: GO111MODULE=off
+
