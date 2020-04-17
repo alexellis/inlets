@@ -66,18 +66,18 @@ getPackage() {
         targetFile="$(pwd)/$REPO"
     fi
 
-    if [ -e $targetFile ]; then
-        rm $targetFile
+    if [ -e "$targetFile" ]; then
+        rm "$targetFile"
     fi
 
     url=https://github.com/$OWNER/$REPO/releases/download/$version/$REPO$suffix
     echo "Downloading package $url as $targetFile"
 
-    curl -sSLf $url --output $targetFile
+    curl -sSLf $url --output "$targetFile"
 
     if [ "$?" = "0" ]; then
 
-    chmod +x $targetFile
+    chmod +x "$targetFile"
 
     echo "Download complete."
 
@@ -111,14 +111,14 @@ getPackage() {
 
             fi
 
-            mv $targetFile $BINLOCATION/$REPO
+            mv "$targetFile" $BINLOCATION/$REPO
 
             if [ "$?" = "0" ]; then
                 echo "New version of $REPO installed to $BINLOCATION"
             fi
 
-            if [ -e $targetFile ]; then
-                rm $targetFile
+            if [ -e "$targetFile" ]; then
+                rm "$targetFile"
             fi
 
            ${SUCCESS_CMD}
