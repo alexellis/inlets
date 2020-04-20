@@ -2,7 +2,7 @@
 
 Provisioning on a VPS will see inlets running as a systemd service.  All the usual `service` commands should be used with `inlets` as the service name.
 
-Inlets uses a token to prevent unauthorized access to the server component.  A known token can be configured by amending [userdata.sh](./hack/userdata.sh) prior to provisioning
+Inlets uses a token to prevent unauthorized access to the server component.  A known token can be configured by amending [userdata.sh](../hack/userdata.sh) prior to provisioning
 
 ```sh
 # Enables randomly generated authentication token by default.
@@ -82,7 +82,7 @@ Installation scripts have been provided which use `systemd` as a process supervi
 
 ### DigitalOcean
 
-If you're a [DigitalOcean](https://www.digitalocean.com) user and use `doctl` then you can provision a host with [./hack/provision-digitalocean.sh](./hack/provision-digitalocean.sh).  Please ensure you have configured `droplet.create.ssh-keys` within your `~/.config/doctl/config.yaml`.
+If you're a [DigitalOcean](https://www.digitalocean.com) user and use `doctl` then you can provision a host with [../hack/provision-digitalocean.sh](../hack/provision-digitalocean.sh).  Please ensure you have configured `droplet.create.ssh-keys` within your `~/.config/doctl/config.yaml`.
 
 DigitalOcean will then email you the IP and root password for your new host. You can use it to log in and get your auth token, so that you can connect your client after that.
 
@@ -95,13 +95,13 @@ Datacenters for exit-nodes are available world-wide
 Installation is currently manual and the datacenter is located in London.
 
 * Create a VM of any size and then download and run inlets as a server
-* Copy over `./hack/userdata.sh` and run it on the server as `root`
+* Copy over `../hack/userdata.sh` and run it on the server as `root`
 
 ### Scaleway
 
 [Scaleway](https://www.scaleway.com/) offer probably the cheapest option at 1.99 EUR / month using the "1-XS" from the "Start" tier.
 
-If you have the Scaleway CLI installed you can provision a host with [./hack/provision-scaleway.sh](./hack/provision-scaleway.sh).
+If you have the Scaleway CLI installed you can provision a host with [../hack/provision-scaleway.sh](../hack/provision-scaleway.sh).
 
 Datacenters include: Paris and Amsterdam.
 
