@@ -6,17 +6,15 @@ package server
 import (
 	"crypto/subtle"
 	"fmt"
-	"log"
-	"net"
-	"net/http"
-	"sync"
-	"time"
-
+	"github.com/inlets/inlets/pkg/client"
 	"github.com/inlets/inlets/pkg/router"
 	"github.com/inlets/inlets/pkg/transport"
 	"github.com/rancher/remotedialer"
 	"github.com/twinj/uuid"
 	"k8s.io/apimachinery/pkg/util/proxy"
+	"log"
+	"net/http"
+	"sync"
 )
 
 // Server for the exit-node of inlets
@@ -36,12 +34,21 @@ type Server struct {
 
 	// DisableWrapTransport prevents CORS headers from being striped from responses
 	DisableWrapTransport bool
+
+	// ClientForwarding allows client to forward connection from client to server
+	ClientForwarding bool
 }
 
 // Serve traffic
 func (s *Server) Serve() {
+	connectAuth := client.AllowsAllow
+	if !s.ClientForwarding {
+		connectAuth = nil
+	}
+
 	if s.ControlPort == s.Port {
 		s.server = remotedialer.New(s.authorized, remotedialer.DefaultErrorWriter)
+		s.server.ClientConnectAuthorizer = connectAuth
 		s.router.Server = s.server
 
 		http.HandleFunc("/", s.proxy)
@@ -63,6 +70,7 @@ func (s *Server) Serve() {
 
 			controlServer := http.NewServeMux()
 			s.server = remotedialer.New(s.authorized, remotedialer.DefaultErrorWriter)
+			s.server.ClientConnectAuthorizer = connectAuth
 			s.router.Server = s.server
 
 			controlServer.HandleFunc("/tunnel", s.tunnel)
@@ -119,12 +127,6 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 
 func (s Server) Error(w http.ResponseWriter, req *http.Request, err error) {
 	remotedialer.DefaultErrorWriter(w, req, http.StatusInternalServerError, err)
-}
-
-func (s *Server) dialerFor(id, host string) remotedialer.Dialer {
-	return func(network, address string) (net.Conn, error) {
-		return s.server.Dial(id, time.Minute, network, host)
-	}
 }
 
 func (s *Server) tokenValid(req *http.Request) bool {
