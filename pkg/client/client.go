@@ -6,12 +6,11 @@ package client
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"strings"
-
 	"github.com/inlets/inlets/pkg/transport"
 	"github.com/rancher/remotedialer"
 	"github.com/twinj/uuid"
+	"net/http"
+	"strings"
 )
 
 // Client for inlets
@@ -24,14 +23,17 @@ type Client struct {
 
 	// Token for authentication
 	Token string
+
+	// Local listener to forward connections
+	Listeners []string
 }
 
-func allowsAllow(network, address string) bool {
+func AllowsAllow(network, address string) bool {
 	return true
 }
 
 // Connect connect and serve traffic through websocket
-func (c *Client) Connect() error {
+func (c *Client) Connect(ctx context.Context) error {
 	headers := http.Header{}
 	headers.Set(transport.InletsHeader, uuid.Formatter(uuid.NewV4(), uuid.FormatHex))
 	for k, v := range c.UpstreamMap {
@@ -45,7 +47,16 @@ func (c *Client) Connect() error {
 	if !strings.HasPrefix(url, "ws") {
 		url = "ws://" + url
 	}
+
+	forwarder, err := NewForwarder(c.Listeners)
+	if err != nil {
+		return err
+	}
+	if err := forwarder.Start(); err != nil {
+		return err
+	}
+
 	for {
-		remotedialer.ClientConnect(context.Background(), url+"/tunnel", headers, nil, allowsAllow, nil)
+		remotedialer.ClientConnect(ctx, url+"/tunnel", headers, nil, AllowsAllow, forwarder.OnTunnelConnect)
 	}
 }

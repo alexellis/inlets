@@ -38,6 +38,7 @@ func init() {
 	serverCmd.Flags().Bool("print-token", true, "prints the token in server mode")
 	serverCmd.Flags().StringP("token-from", "f", "", "read the authentication token from a file")
 	serverCmd.Flags().Bool("disable-transport-wrapping", false, "disable wrapping the transport that removes CORS headers for example")
+	serverCmd.Flags().Bool("client-forwarding", true, "allow clients to forward connections")
 	serverCmd.Flags().IntP("control-port", "c", 8080, "control port for tunnel")
 
 	inletsCmd.AddCommand(serverCmd)
@@ -105,6 +106,11 @@ func runServer(cmd *cobra.Command, _ []string) error {
 		controlPort = port
 	}
 
+	clientForwarding, err := cmd.Flags().GetBool("client-forwarding")
+	if err != nil {
+		return errors.Wrap(err, "failed to get the 'client-forwarding' value.")
+	}
+
 	disableWrapTransport, err := cmd.Flags().GetBool("disable-transport-wrapping")
 	if err != nil {
 		return errors.Wrap(err, "failed to get the 'disable-transport-wrapping' value.")
@@ -115,6 +121,7 @@ func runServer(cmd *cobra.Command, _ []string) error {
 		ControlPort: controlPort,
 		Token:       token,
 
+		ClientForwarding:     clientForwarding,
 		DisableWrapTransport: disableWrapTransport,
 	}
 

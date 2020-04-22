@@ -20,6 +20,7 @@ func init() {
 	clientCmd.Flags().StringP("upstream", "u", "", "upstream server i.e. http://127.0.0.1:3000")
 	clientCmd.Flags().StringP("token", "t", "", "authentication token")
 	clientCmd.Flags().StringP("token-from", "f", "", "read the authentication token from a file")
+	clientCmd.Flags().StringArrayP("local", "l", nil, "forward local connection i.e 8080:example.com:80")
 	clientCmd.Flags().Bool("print-token", true, "prints the token in server mode")
 }
 
@@ -68,12 +69,17 @@ func runClient(cmd *cobra.Command, _ []string) error {
 	log.Printf("%s", WelcomeMessage)
 	log.Printf("Starting client - version %s", getVersion())
 
+	listeners, err := cmd.Flags().GetStringArray("listen")
+	if err != nil {
+		return errors.Wrap(err, "failed to get 'listen' value.")
+	}
+
 	upstream, err := cmd.Flags().GetString("upstream")
 	if err != nil {
 		return errors.Wrap(err, "failed to get 'upstream' value")
 	}
 
-	if len(upstream) == 0 {
+	if len(upstream) == 0 && len(listeners) == 0 {
 		return errors.New("upstream is missing in the client argument")
 	}
 
@@ -124,9 +130,10 @@ func runClient(cmd *cobra.Command, _ []string) error {
 		Remote:      remote,
 		UpstreamMap: upstreamMap,
 		Token:       token,
+		Listeners:   listeners,
 	}
 
-	if err := inletsClient.Connect(); err != nil {
+	if err := inletsClient.Connect(cmd.Context()); err != nil {
 		return err
 	}
 
