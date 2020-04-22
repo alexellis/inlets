@@ -142,15 +142,14 @@
   version = "v0.0.10"
 
 [[projects]]
-  digest = "1:69f68eb300f03719438887fbc92f92e4653a2e5e25fb0a279869561ae62b0986"
+  digest = "1:2170f6ab0149010d317ee95e05881c722e25d3ab07f6932bd1866016881895ad"
   name = "github.com/rancher/remotedialer"
   packages = [
     ".",
     "metrics",
   ]
   pruneopts = "UT"
-  revision = "e21c829274a00c5adbf28b4166ca40eae19b83c8"
-  version = "v0.2.5"
+  revision = "d7b8cd199b99bb087e06b717e355038fbf449558"
 
 [[projects]]
   digest = "1:04457f9f6f3ffc5fea48e71d62f2ca256637dee0a04d710288e27e05c8b41976"

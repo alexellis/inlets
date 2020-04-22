@@ -20,5 +20,5 @@
 
 [[constraint]]
   name = "github.com/rancher/remotedialer"
-  version = "v0.2.5"
+  revision = "d7b8cd199b99bb087e06b717e355038fbf449558"
 
