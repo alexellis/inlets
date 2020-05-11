@@ -33,5 +33,7 @@ COPY --from=build /usr/bin/inlets /usr/bin/
 USER app
 EXPOSE 80
 
+VOLUME /tmp/
+
 ENTRYPOINT ["/usr/bin/inlets"]
 CMD ["--help"]

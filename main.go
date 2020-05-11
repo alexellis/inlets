@@ -5,6 +5,7 @@ package main
 
 import (
 	"github.com/inlets/inlets/cmd"
+	"github.com/sirupsen/logrus"
 )
 
 // These values will be injected into these variables at the build time.
@@ -14,6 +15,11 @@ var (
 )
 
 func main() {
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = "2006/01/02 15:04:05"
+	logrus.SetFormatter(customFormatter)
+	customFormatter.FullTimestamp = true
+
 	if err := cmd.Execute(Version, GitCommit); err != nil {
 		panic(err)
 	}
