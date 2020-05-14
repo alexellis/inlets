@@ -28,6 +28,8 @@ type Server struct {
 	// ControlPort represents the tunnel to the inlets client
 	ControlPort int
 
+	BindAddr string
+
 	// Token is used to authenticate a client
 	Token string
 
@@ -47,10 +49,10 @@ func (s *Server) Serve() {
 		http.HandleFunc("/", s.proxy)
 		http.HandleFunc("/tunnel", s.tunnel)
 
-		log.Printf("Control Plane Listening on :%d\n", s.ControlPort)
-		log.Printf("Data Plane Listening on :%d\n", s.Port)
+		log.Printf("Control Plane Listening on %s:%d\n", s.BindAddr, s.ControlPort)
+		log.Printf("Data Plane Listening on %s:%d\n", s.BindAddr, s.Port)
 
-		if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), nil); err != nil {
+		if err := http.ListenAndServe(fmt.Sprintf("%s:%d", s.BindAddr, s.Port), nil); err != nil {
 			log.Fatal(err)
 		}
 	} else {
@@ -67,8 +69,8 @@ func (s *Server) Serve() {
 
 			controlServer.HandleFunc("/tunnel", s.tunnel)
 
-			log.Printf("Control Plane Listening on :%d\n", s.ControlPort)
-			if err := http.ListenAndServe(fmt.Sprintf(":%d", s.ControlPort), controlServer); err != nil {
+			log.Printf("Control Plane Listening on %s:%d\n", s.BindAddr, s.ControlPort)
+			if err := http.ListenAndServe(fmt.Sprintf("%s:%d", s.BindAddr, s.ControlPort), controlServer); err != nil {
 				log.Fatal(err)
 			}
 
@@ -82,9 +84,9 @@ func (s *Server) Serve() {
 			controlServer.HandleFunc("/", s.proxy)
 
 			http.HandleFunc("/", s.proxy)
-			log.Printf("Data Plane Listening on :%d\n", s.Port)
+			log.Printf("Data Plane Listening on %s:%d\n", s.BindAddr, s.Port)
 
-			if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), controlServer); err != nil {
+			if err := http.ListenAndServe(fmt.Sprintf("%s:%d", s.BindAddr, s.Port), controlServer); err != nil {
 				log.Fatal(err)
 			}
 		}()

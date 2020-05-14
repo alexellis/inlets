@@ -39,6 +39,7 @@ func init() {
 	serverCmd.Flags().StringP("token-from", "f", "", "read the authentication token from a file")
 	serverCmd.Flags().Bool("disable-transport-wrapping", false, "disable wrapping the transport that removes CORS headers for example")
 	serverCmd.Flags().IntP("control-port", "c", 8080, "control port for tunnel")
+	serverCmd.Flags().StringP("bind-addr", "b", "", "address the server should be bound to")
 
 	inletsCmd.AddCommand(serverCmd)
 }
@@ -110,9 +111,15 @@ func runServer(cmd *cobra.Command, _ []string) error {
 		return errors.Wrap(err, "failed to get the 'disable-transport-wrapping' value.")
 	}
 
+	bindAddr, err := cmd.Flags().GetString("bind-addr")
+	if err != nil {
+		return errors.Wrap(err, "failed to get the 'bind-addr' value.")
+	}
+
 	inletsServer := server.Server{
 		Port:        port,
 		ControlPort: controlPort,
+		BindAddr:    bindAddr,
 		Token:       token,
 
 		DisableWrapTransport: disableWrapTransport,
