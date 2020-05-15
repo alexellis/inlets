@@ -21,6 +21,7 @@ func init() {
 	clientCmd.Flags().StringP("token", "t", "", "authentication token")
 	clientCmd.Flags().StringP("token-from", "f", "", "read the authentication token from a file")
 	clientCmd.Flags().Bool("print-token", true, "prints the token in server mode")
+	clientCmd.Flags().Bool("strict-forwarding", true, "forward only to the upstream URLs specified")
 }
 
 type UpstreamParser interface {
@@ -48,6 +49,14 @@ func buildUpstreamMap(args string) map[string]string {
 			items[strings.TrimSpace(kvp[0])] = strings.TrimSpace(kvp[1])
 		}
 	}
+
+	for k, v := range items {
+		hasScheme := (strings.HasPrefix(v, "http://") || strings.HasPrefix(v, "https://"))
+		if hasScheme == false {
+			items[k] = fmt.Sprintf("http://%s", v)
+		}
+	}
+
 	return items
 }
 
@@ -116,14 +125,20 @@ func runClient(cmd *cobra.Command, _ []string) error {
 		return errors.Wrap(err, "failed to get 'print-token' value.")
 	}
 
+	strictForwarding, err := cmd.Flags().GetBool("strict-forwarding")
+	if err != nil {
+		return errors.Wrap(err, "failed to get 'strict-forwarding' value.")
+	}
+
 	if len(token) > 0 && printToken {
 		log.Printf("Token: %q", token)
 	}
 
 	inletsClient := client.Client{
-		Remote:      remote,
-		UpstreamMap: upstreamMap,
-		Token:       token,
+		Remote:           remote,
+		UpstreamMap:      upstreamMap,
+		Token:            token,
+		StrictForwarding: strictForwarding,
 	}
 
 	if err := inletsClient.Connect(); err != nil {

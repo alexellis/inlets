@@ -55,7 +55,6 @@ func (r *Router) Lookup(req *http.Request) *Route {
 	if len(targets) == 0 {
 		targets = r.domains[""]
 	}
-
 	if len(targets) == 0 {
 		return nil
 	}
