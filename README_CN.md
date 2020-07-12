@@ -238,7 +238,7 @@ curl -d "hash this" http://gateway.mydomain.tk/hash
 你会看到有流量通过隧道客户端到出口节点，如果你运行的是 hash-browns 服务，会出现类似下面的日志：
 
 ```sh
-~/go/src/github.com/alexellis/hash-browns$ port=3000 go run server.go
+~/go/src/github.com/alexellis/hash-browns$ port=3000 go run main.go
 2018/12/23 20:15:00 Listening on port: 3000
 "hash this"
 ```

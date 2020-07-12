@@ -219,7 +219,7 @@ curl -d "hash this" http://gateway.mydomain.tk/hash
 You will see the traffic pass between the exit node / server and your development machine. You'll see the hash message appear in the logs as below:
 
 ```sh
-~/go/src/github.com/alexellis/hash-browns$ port=3000 go run server.go
+~/go/src/github.com/alexellis/hash-browns$ port=3000 go run main.go
 2018/12/23 20:15:00 Listening on port: 3000
 "hash this"
 ```
