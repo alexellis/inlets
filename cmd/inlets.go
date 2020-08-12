@@ -28,13 +28,18 @@ var inletsCmd = &cobra.Command{
 	Short: "Expose your local endpoints to the Internet.",
 	Long: `
 Inlets combines a reverse proxy and websocket tunnels to expose your internal 
-and development endpoints to the public Internet via an exit-node.
+and development endpoints on another network, or to the public Internet via 
+an exit-node.
 
 An exit-node may be a 5-10 USD VPS or any other computer with an IPv4 IP address. 
-You can also use inlets to bridge connect between private networks.
+You can also use inlets to bridge connect between private networks, only 
+exposing the services on loopback or a private IP address.
 
 It is strongly recommended to put a reverse proxy with TLS/SSL enabled such as 
 Nginx or Caddy in front of your inlets server to enable an encrypted tunnel.
+
+You can also use inlets PRO (https://github.com/inlets/inlets-pro) to enable 
+automatic TLS, TCP support, and private-mode for your tunnel.
 
 See: https://github.com/inlets/inlets for more information.`,
 	Run: runInlets,
