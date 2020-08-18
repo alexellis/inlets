@@ -6,6 +6,8 @@ This is a list of adopters of inlets
 
 * [Banzai Cloud](https://banzaicloud.com/) - inlets is used in [kurun](https://github.com/banzaicloud/kurun) for [proxying services](https://banzaicloud.com/blog/kurun-port-forward/).
 
+* [Cloodot](https://beta.cloodot.com/) - We use inlets as a replacement for ngrok while developing with webhooks.
+
 * [VSHN](https://vshn.ch) - VSHN uses inlets for connecting managed OpenShift clusters
   which are behind a firewall to the customer portal. Only the control
   plane of inlets is exposed to the internet, the customer portal connects
