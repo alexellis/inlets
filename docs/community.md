@@ -17,6 +17,7 @@ inlets has trended on the front page of Hacker News twice.
 * [Get a LoadBalancer for your private Kubernetes cluster with inlets-operator](https://blog.alexellis.io/ingress-for-your-local-kubernetes-cluster/) - Alex Ellis
 * [Webhooks, great when you can get them](https://blog.alexellis.io/webhooks-are-great-when-you-can-get-them/) - Alex Ellis
 * [Loan a cloud IP to your minikube cluster](https://blog.alexellis.io/loan-an-ip-to-your-minikube-cluster/) - Alex Ellis
+* [Set your own "ngrok alternative" on Heroku](https://www.linkedin.com/pulse/set-your-own-ngrok-alternative-heroku-xuan-son-nguyen/) - Xuan Son Nguyen
 
 ### Community tutorials
 
