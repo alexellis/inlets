@@ -17,6 +17,7 @@ after_success:
   - make docker-login
   - make push
   - make manifest
+  - make manifest-latest
   - make docker-login-ghcr
   - make tag-ghcr
   - make push-ghcr

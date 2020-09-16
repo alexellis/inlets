@@ -56,6 +56,13 @@ manifest:
 	docker manifest annotate inlets/inlets:$(Version) inlets/inlets:$(Version)-armhf --os linux --arch arm --variant v6
 	docker manifest push inlets/inlets:$(Version)
 
+.PHONY: manifest-latest
+manifest-latest:
+	docker manifest create --amend inlets/inlets:latest inlets/inlets:$(Version)-amd64 inlets/inlets:$(Version)-arm64 inlets/inlets:$(Version)-armhf
+	docker manifest annotate inlets/inlets:latest inlets/inlets:$(Version)-arm64 --os linux --arch arm64
+	docker manifest annotate inlets/inlets:latest inlets/inlets:$(Version)-armhf --os linux --arch arm --variant v6
+	docker manifest push inlets/inlets:latest
+
 .PHONY: manifest-ghcr
 manifest-ghcr:
 	docker manifest create --amend ghcr.io/inlets/inlets:$(Version) ghcr.io/inlets/inlets:$(Version)-amd64 ghcr.io/inlets/inlets:$(Version)-arm64 ghcr.io/inlets/inlets:$(Version)-armhf
