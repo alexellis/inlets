@@ -6,6 +6,8 @@ package server
 import (
 	"crypto/subtle"
 	"fmt"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"log"
 	"net"
 	"net/http"
@@ -52,7 +54,9 @@ func (s *Server) Serve() {
 		log.Printf("Control Plane Listening on %s:%d\n", s.BindAddr, s.ControlPort)
 		log.Printf("Data Plane Listening on %s:%d\n", s.BindAddr, s.Port)
 
-		if err := http.ListenAndServe(fmt.Sprintf("%s:%d", s.BindAddr, s.Port), nil); err != nil {
+		h2s := &http2.Server{}
+		server := &http.Server{Addr: fmt.Sprintf("%s:%d", s.BindAddr, s.Port), Handler: h2c.NewHandler(http.DefaultServeMux, h2s)}
+		if err := server.ListenAndServe(); err != nil {
 			log.Fatal(err)
 		}
 	} else {
@@ -115,7 +119,11 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	u.Host = r.Host
 	u.Scheme = route.Scheme
 
-	httpProxy := proxy.NewUpgradeAwareHandler(&u, route.Transport, !s.DisableWrapTransport, false, s)
+	var transport http.RoundTripper = route.Transport
+	if r.ProtoMajor == 2 {
+		transport = route.Http2Transport
+	}
+	httpProxy := proxy.NewUpgradeAwareHandler(&u, transport, !s.DisableWrapTransport, false, s)
 	httpProxy.ServeHTTP(w, r)
 }
 

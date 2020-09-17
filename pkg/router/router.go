@@ -5,6 +5,7 @@ package router
 
 import (
 	"crypto/tls"
+	"golang.org/x/net/http2"
 	"net"
 	"net/http"
 	"strings"
@@ -24,11 +25,13 @@ type target struct {
 type transportKey struct {
 	id   string
 	host string
+	typ  string
 }
 
 type transportValue struct {
-	tranport *http.Transport
-	scheme   string
+	tranport       *http.Transport
+	http2Transport *http2.Transport
+	scheme         string
 }
 
 type Router struct {
@@ -42,9 +45,10 @@ type Router struct {
 }
 
 type Route struct {
-	ID        string
-	Scheme    string
-	Transport *http.Transport
+	ID             string
+	Scheme         string
+	Transport      *http.Transport
+	Http2Transport *http2.Transport
 }
 
 func (r *Router) Lookup(req *http.Request) *Route {
@@ -61,13 +65,57 @@ func (r *Router) Lookup(req *http.Request) *Route {
 
 	id, host := targets[0].id, targets[0].target
 	scheme, transport := r.getTransport(id, host)
+	_, h2Transport := r.getHttp2Transport(id, host)
 	return &Route{
-		ID:        id,
-		Scheme:    scheme,
-		Transport: transport,
+		ID:             id,
+		Scheme:         scheme,
+		Transport:      transport,
+		Http2Transport: h2Transport,
 	}
 }
 
+func (r *Router) getHttp2Transport(id, host string) (string, *http2.Transport) {
+	key := transportKey{id: id, host: host, typ: "http2"}
+
+	r.transportLock.RLock()
+	val, ok := r.transports[key]
+	if ok {
+		r.transportLock.RUnlock()
+		return val.scheme, val.http2Transport
+	}
+	r.transportLock.RUnlock()
+
+	r.transportLock.Lock()
+	defer r.transportLock.Unlock()
+
+	targetHost := host
+	scheme := "http"
+	if strings.HasPrefix(host, "https://") {
+		scheme = "https"
+		targetHost = host[len("https://"):]
+	} else if strings.HasPrefix(host, "http://") {
+		targetHost = host[len("http://"):]
+	}
+
+	transport := &http2.Transport{
+		// h2c
+		AllowHTTP: true,
+		DialTLS: func(network, address string, cfg *tls.Config) (net.Conn, error) {
+			return r.Server.Dial(id, time.Minute, network, targetHost)
+		},
+		TLSClientConfig: &tls.Config{
+			// TLS cert will basically never line up right
+			InsecureSkipVerify: true,
+		},
+	}
+
+	if r.transports == nil {
+		r.transports = map[transportKey]transportValue{}
+	}
+
+	r.transports[transportKey{id: id, host: host, typ: "http2"}] = transportValue{scheme: scheme, http2Transport: transport}
+	return scheme, transport
+}
 func (r *Router) getTransport(id, host string) (string, *http.Transport) {
 	key := transportKey{id: id, host: host}
 
