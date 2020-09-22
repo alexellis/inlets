@@ -40,6 +40,7 @@ cat /etc/default/inlets
 
 * Enter this text into a Caddyfile replacing `exit.domain.com` with your subdomain.
 
+### Caddy v1
 ```Caddyfile
 exit.domain.com
 
@@ -50,6 +51,27 @@ proxy / 127.0.0.1:8000 {
 proxy /tunnel 127.0.0.1:8000 {
   transparent
   websocket
+}
+```
+
+### Caddy v2
+```Caddyfile
+exit.domain.com
+
+reverse_proxy / 127.0.0.1:8000 {
+  header_up Host {http.request.host}
+  header_up X-Real-IP {http.request.remote}
+  header_up X-Forwarded-For {http.request.remote}
+  header_up X-Forwarded-Port {http.request.port}
+  header_up X-Forwarded-Proto {http.request.scheme}
+}
+
+reverse_proxy /tunnel 127.0.0.1:8000 {
+  header_up Host {http.request.host}
+  header_up X-Real-IP {http.request.remote}
+  header_up X-Forwarded-For {http.request.remote}
+  header_up X-Forwarded-Port {http.request.port}
+  header_up X-Forwarded-Proto {http.request.scheme}
 }
 ```
 
