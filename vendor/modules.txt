@@ -40,7 +40,7 @@ github.com/prometheus/common/model
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/rancher/remotedialer v0.2.5
+# github.com/rancher/remotedialer v0.2.6-0.20200820180140-e5448aaba7ee
 github.com/rancher/remotedialer
 github.com/rancher/remotedialer/metrics
 # github.com/sirupsen/logrus v1.4.2

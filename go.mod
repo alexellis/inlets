@@ -13,7 +13,7 @@ require (
 	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/procfs v0.0.10 // indirect
-	github.com/rancher/remotedialer v0.2.5
+	github.com/rancher/remotedialer v0.2.6-0.20200820180140-e5448aaba7ee
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.6
 	github.com/spf13/pflag v1.0.5 // indirect

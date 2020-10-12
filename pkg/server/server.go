@@ -6,17 +6,14 @@ package server
 import (
 	"crypto/subtle"
 	"fmt"
-	"log"
-	"net"
-	"net/http"
-	"sync"
-	"time"
-
 	"github.com/inlets/inlets/pkg/router"
 	"github.com/inlets/inlets/pkg/transport"
 	"github.com/rancher/remotedialer"
 	"github.com/twinj/uuid"
 	"k8s.io/apimachinery/pkg/util/proxy"
+	"log"
+	"net/http"
+	"sync"
 )
 
 // Server for the exit-server of inlets
@@ -121,12 +118,6 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 
 func (s Server) Error(w http.ResponseWriter, req *http.Request, err error) {
 	remotedialer.DefaultErrorWriter(w, req, http.StatusInternalServerError, err)
-}
-
-func (s *Server) dialerFor(id, host string) remotedialer.Dialer {
-	return func(network, address string) (net.Conn, error) {
-		return s.server.Dial(id, time.Minute, network, host)
-	}
 }
 
 func (s *Server) tokenValid(req *http.Request) bool {

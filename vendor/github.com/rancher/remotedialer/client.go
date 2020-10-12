@@ -10,22 +10,28 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// ConnectAuthorizer custom for authorization
 type ConnectAuthorizer func(proto, address string) bool
 
-func ClientConnect(ctx context.Context, wsURL string, headers http.Header, dialer *websocket.Dialer, auth ConnectAuthorizer, onConnect func(context.Context) error) {
-	if err := connectToProxy(ctx, wsURL, headers, auth, dialer, onConnect); err != nil {
+// ClientConnect connect to WS and wait 5 seconds when error
+func ClientConnect(ctx context.Context, wsURL string, headers http.Header, dialer *websocket.Dialer,
+	auth ConnectAuthorizer, onConnect func(context.Context, *Session) error) error {
+	if err := ConnectToProxy(ctx, wsURL, headers, auth, dialer, onConnect); err != nil {
 		logrus.WithError(err).Error("Remotedialer proxy error")
 		time.Sleep(time.Duration(5) * time.Second)
+		return err
 	}
+	return nil
 }
 
-func connectToProxy(rootCtx context.Context, proxyURL string, headers http.Header, auth ConnectAuthorizer, dialer *websocket.Dialer, onConnect func(context.Context) error) error {
+// ConnectToProxy connect to websocket server
+func ConnectToProxy(rootCtx context.Context, proxyURL string, headers http.Header, auth ConnectAuthorizer, dialer *websocket.Dialer, onConnect func(context.Context, *Session) error) error {
 	logrus.WithField("url", proxyURL).Info("Connecting to proxy")
 
 	if dialer == nil {
-		dialer = &websocket.Dialer{Proxy:http.ProxyFromEnvironment,HandshakeTimeout:HandshakeTimeOut}
+		dialer = &websocket.Dialer{Proxy: http.ProxyFromEnvironment, HandshakeTimeout: HandshakeTimeOut}
 	}
-	ws, resp, err := dialer.Dial(proxyURL, headers)
+	ws, resp, err := dialer.DialContext(rootCtx, proxyURL, headers)
 	if err != nil {
 		if resp == nil {
 			logrus.WithError(err).Errorf("Failed to connect to proxy. Empty dialer response")
@@ -46,16 +52,16 @@ func connectToProxy(rootCtx context.Context, proxyURL string, headers http.Heade
 	ctx, cancel := context.WithCancel(rootCtx)
 	defer cancel()
 
+	session := NewClientSession(auth, ws)
+	defer session.Close()
+
 	if onConnect != nil {
 		go func() {
-			if err := onConnect(ctx); err != nil {
+			if err := onConnect(ctx, session); err != nil {
 				result <- err
 			}
 		}()
 	}
-
-	session := NewClientSession(auth, ws)
-	defer session.Close()
 
 	go func() {
 		_, err = session.Serve(ctx)

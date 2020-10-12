@@ -1,7 +1,6 @@
 package remotedialer
 
 import (
-	"context"
 	"net/http"
 	"sync"
 	"time"
@@ -20,18 +19,19 @@ type Authorizer func(req *http.Request) (clientKey string, authed bool, err erro
 type ErrorWriter func(rw http.ResponseWriter, req *http.Request, code int, err error)
 
 func DefaultErrorWriter(rw http.ResponseWriter, req *http.Request, code int, err error) {
-	rw.Write([]byte(err.Error()))
 	rw.WriteHeader(code)
+	rw.Write([]byte(err.Error()))
 }
 
 type Server struct {
-	PeerID      string
-	PeerToken   string
-	authorizer  Authorizer
-	errorWriter ErrorWriter
-	sessions    *sessionManager
-	peers       map[string]peer
-	peerLock    sync.Mutex
+	PeerID                  string
+	PeerToken               string
+	ClientConnectAuthorizer ConnectAuthorizer
+	authorizer              Authorizer
+	errorWriter             ErrorWriter
+	sessions                *sessionManager
+	peers                   map[string]peer
+	peerLock                sync.Mutex
 }
 
 func New(auth Authorizer, errorWriter ErrorWriter) *Server {
@@ -69,10 +69,11 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	session := s.sessions.add(clientKey, wsConn, peer)
+	session.auth = s.ClientConnectAuthorizer
 	defer s.sessions.remove(session)
 
 	// Don't need to associate req.Context() to the Session, it will cancel otherwise
-	code, err := session.Serve(context.Background())
+	code, err := session.Serve(req.Context())
 	if err != nil {
 		// Hijacked so we can't write to the client
 		logrus.Infof("error in remotedialer server [%d]: %v", code, err)
