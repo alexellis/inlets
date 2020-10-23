@@ -6,6 +6,12 @@ LDFLAGS := "-s -w -X main.Version=$(Version) -X main.GitCommit=$(GitCommit)"
 # but for now it's still experimental feature so we need to enable that
 export DOCKER_CLI_EXPERIMENTAL=enabled
 
+PLATFORMS?=linux/amd64,linux/arm/v6,linux/arm64
+OUTPUT=
+PROGRESS=plain
+
+REGISTRY=docker.io
+
 .PHONY: all
 all: docker
 
@@ -20,9 +26,12 @@ dist:
 
 .PHONY: docker
 docker:
-	docker build --build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) -t inlets/inlets:$(Version)-amd64 .
-	docker build --build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) --build-arg OPTS="GOARCH=arm64" -t inlets/inlets:$(Version)-arm64 .
-	docker build --build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) --build-arg OPTS="GOARCH=arm GOARM=6" -t inlets/inlets:$(Version)-armhf .
+	docker buildx build \
+		--platform=${PLATFORMS} $(OUTPUT) \
+		--progress=$(PROGRESS) \
+		--pull \
+		--build-arg VERSION=$(Version) --build-arg GIT_COMMIT=$(GitCommit) \
+		-t $(REGISTRY)/inlets/inlets:$(Version) .
 
 .PHONY: docker-login
 docker-login:
@@ -33,33 +42,16 @@ docker-login-ghcr:
 	echo -n "${GHCR_PASSWORD}" | docker login -u "${GHCR_USERNAME}" --password-stdin ghcr.io
 
 .PHONY: push
-push:
-	docker push inlets/inlets:$(Version)-amd64
-	docker push inlets/inlets:$(Version)-arm64
-	docker push inlets/inlets:$(Version)-armhf
-
-.PHONY: tag-ghcr
-tag-ghcr:
-	docker tag inlets/inlets:$(Version)-amd64 ghcr.io/inlets/inlets:$(Version)-amd64
-	docker tag inlets/inlets:$(Version)-arm64 ghcr.io/inlets/inlets:$(Version)-arm64
-	docker tag inlets/inlets:$(Version)-armhf ghcr.io/inlets/inlets:$(Version)-armhf
+push: OUTPUT=--push
+push: docker
 
 .PHONY: push-ghcr
-push-ghcr:
-	docker push ghcr.io/inlets/inlets:$(Version)-amd64
-	docker push ghcr.io/inlets/inlets:$(Version)-arm64
-	docker push ghcr.io/inlets/inlets:$(Version)-armhf
+push-ghcr: REGISTRY=ghcr.io
+push-ghcr: OUTPUT=--push
+push-ghcr: docker
 
-.PHONY: manifest
-manifest:
-	docker manifest create --amend inlets/inlets:$(Version) inlets/inlets:$(Version)-amd64 inlets/inlets:$(Version)-arm64 inlets/inlets:$(Version)-armhf
-	docker manifest annotate inlets/inlets:$(Version) inlets/inlets:$(Version)-arm64 --os linux --arch arm64
-	docker manifest annotate inlets/inlets:$(Version) inlets/inlets:$(Version)-armhf --os linux --arch arm --variant v6
-	docker manifest push inlets/inlets:$(Version)
-
-.PHONY: manifest-ghcr
-manifest-ghcr:
-	docker manifest create --amend ghcr.io/inlets/inlets:$(Version) ghcr.io/inlets/inlets:$(Version)-amd64 ghcr.io/inlets/inlets:$(Version)-arm64 ghcr.io/inlets/inlets:$(Version)-armhf
-	docker manifest annotate ghcr.io/inlets/inlets:$(Version) ghcr.io/inlets/inlets:$(Version)-arm64 --os linux --arch arm64
-	docker manifest annotate ghcr.io/inlets/inlets:$(Version) ghcr.io/inlets/inlets:$(Version)-armhf --os linux --arch arm --variant v6
-	docker manifest push ghcr.io/inlets/inlets:$(Version)
+# build local docker image for amd64
+.PHONY: local-image
+local-image: PLATFORMS=amd64
+local-image: OUTPUT=--load
+local-image: docker
