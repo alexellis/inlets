@@ -1,26 +1,33 @@
 sudo: required
 language: go
 
+dist: bionic
+
 go:
 - "1.13"
 
-services:
-- docker
 script:
-- make docker
+- docker buildx version
+- make docker || travis_terminate 1;
 - make dist
 
 before_script:
-- curl -sSLf https://get.docker.com | sed s/sleep\ 20/sleep\ 0/g | sudo -E sh
+  - sudo rm -rf /var/lib/apt/lists/*
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+  - sudo apt-get update -qy
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - mkdir -vp ~/.docker/cli-plugins/
+  - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.3.0/buildx-v0.3.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+  - chmod a+x ~/.docker/cli-plugins/docker-buildx
+  - sudo systemctl start docker
+  - ./hack/install-buildx.sh
 
 after_success:
   - make docker-login
-  - make push
-  - make manifest
   - make docker-login-ghcr
-  - make tag-ghcr
+  - make push
   - make push-ghcr
-  - make manifest-ghcr
 
 before_deploy:
   - ./ci/hashgen.sh
