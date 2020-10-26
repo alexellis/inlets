@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Source: https://www.docker.com/blog/multi-arch-build-what-about-travis/
 if [ -n "$DEBUG" ]; then
 	set -x
 fi
