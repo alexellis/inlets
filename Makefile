@@ -18,6 +18,11 @@ dist:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/inlets-arm64
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -installsuffix cgo -o bin/inlets.exe
 
+.PHONY: docker-local
+docker-local:
+	docker build \
+		-t inlets/inlets:$(Version) .
+
 .PHONY: docker
 docker:
 	@docker buildx create --use --name=multiarch --node multiarch && \
