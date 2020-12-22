@@ -36,7 +36,7 @@ cat /etc/default/inlets
 
 * Create a DNS A record for your exit-server IP and the DNS entry `exit.domain.com` (replace as necessary).
 
-* Download Caddy from the [Releases page](https://github.com/mholt/caddy/releases).
+* Download Caddy from the [Releases page](https://github.com/caddyserver/caddy/releases).
 
 * Enter this text into a Caddyfile replacing `exit.domain.com` with your subdomain.
 
