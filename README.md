@@ -157,7 +157,7 @@ Read community tutorials, the launch posts on Hacker News, and send a PR if you 
 
 See [ADOPTERS.md](./ADOPTERS.md) for what companies are doing with inlets today.
 
-#### SWAG and merchandise
+### SWAG and merchandise
 
 Head over to the new [OpenFaaS Ltd SWAG store](https://store.openfaas.com/) to get your very own branded inlets hoodie, t-shirt and mug.
 
