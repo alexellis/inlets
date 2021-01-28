@@ -9,7 +9,7 @@ jobs:
   publish:
     strategy:
         matrix:
-          go-version: [1.13.x]
+          go-version: [1.15.x]
           os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
