@@ -120,9 +120,9 @@ func runServer(cmd *cobra.Command, _ []string) error {
 		return errors.Wrap(err, "failed to get the 'disable-transport-wrapping' value.")
 	}
 
-	dataAddr, err := cmd.Flags().GetString("control-addr")
+	dataAddr, err := cmd.Flags().GetString("data-addr")
 	if err != nil {
-		return errors.Wrap(err, "failed to get the 'control-addr' value.")
+		return errors.Wrap(err, "failed to get the 'data-addr' value.")
 	}
 
 	controlAddr, err := cmd.Flags().GetString("control-addr")
